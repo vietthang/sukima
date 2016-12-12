@@ -26,7 +26,7 @@ export function object() {
 }
 
 export function array() {
-  return new ArraySchema<void>();
+  return new ArraySchema<any>();
 }
 
 export function nil() {
