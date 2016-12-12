@@ -6,16 +6,17 @@ export abstract class Schema<T> {
 
   protected schema: JsonSchema;
 
-  private metaData: {};
+  protected internal: any;
 
   protected constructor(type: JsonSchemaTypes) {
     this.schema = { type };
-    this.metaData = {};
+    this.internal = {};
   }
 
   protected extend(properties?: Partial<JsonSchema>): this {
     const cloned = Object.create(this.constructor.prototype);
     cloned.schema = Object.assign({}, this.schema, properties);
+    cloned.internal = Object.assign({}, this.internal);
     return cloned;
   }
 
@@ -61,15 +62,6 @@ export abstract class Schema<T> {
 
   oneOf(schemas?: Schema<T>[]) {
     return this.extend({ oneOf: schemas ? schemas.map(subSchema => subSchema.getJsonSchema()) : undefined });
-  }
-
-  meta<U>(key: string, value?: U) {
-    this.metaData[key] = value;
-    return this;
-  }
-
-  getMetaData<U>(key: string) {
-    return this.metaData[key] as U;
   }
 
 }
