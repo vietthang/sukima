@@ -110,21 +110,15 @@ export class ObjectSchema<T, U, V> extends Schema<T & U & V> {
   }
 
   allowAdditionalProperties() {
-    const newInstance = new ObjectSchema<T, U, {}>();
-    newInstance.schema = {
-      ...this.schema,
-      additionalProperties: true,
-    }
-    return newInstance;
+    return this.extend(
+      { additionalProperties: true }
+    ) as any as ObjectSchema<T, U, {}>;
   }
 
   disallowAdditionalProperties() {
-    const newInstance = new ObjectSchema<T, U, Never>();
-    newInstance.schema = {
-      ...this.schema,
-      additionalProperties: false,
-    }
-    return newInstance;
+    return this.extend(
+      { additionalProperties: false }
+    ) as any as ObjectSchema<T, U, Never>;
   }
 
 }
