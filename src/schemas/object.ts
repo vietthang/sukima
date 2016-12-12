@@ -14,7 +14,14 @@ function resolveSchemaHash<T>(properties?: PropertyDefinitions<T>) {
         return;
       }
 
-      schemaHash[key as string] = options.getJsonSchema();
+      if (options instanceof Schema) {
+        schemaHash[key as string] = options.getJsonSchema();
+      } else {
+        schemaHash[key as string] = {
+          type: 'object',
+          properties: resolveSchemaHash(options),
+        };
+      }
     });
     return schemaHash;
   }
@@ -33,7 +40,7 @@ function mergeProperties(
 }
 
 export type PropertyDefinitions<T> = {
-  [property in keyof T]: Schema<T[property]>
+  [property in keyof T]: Schema<T[property]> | PropertyDefinitions<T[property]>;
 }
 
 export interface Never {
