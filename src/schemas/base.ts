@@ -13,10 +13,10 @@ export abstract class Schema<T> {
     this.internal = {};
   }
 
-  protected extend(properties?: Partial<JsonSchema>): this {
+  protected extend(properties?: Partial<JsonSchema>, internal?: any): this {
     const cloned = Object.create(this.constructor.prototype);
-    cloned.schema = Object.assign({}, this.schema, properties);
-    cloned.internal = Object.assign({}, this.internal);
+    cloned.schema = { ...this.schema, ...properties };
+    cloned.internal = { ...this.internal, ...internal };
     return cloned;
   }
 

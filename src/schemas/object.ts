@@ -23,17 +23,13 @@ function resolveSchemaHash<T>(properties?: PropertyDefinitions<T>) {
 function mergeProperties(
   properties: SchemaHash,
   optionalProperties: SchemaHash) {
-  return Object.assign(
-    {},
-    {
-      properties: Object.assign(
-        {},
-        properties,
-        optionalProperties,
-      ),
-      required: Object.keys(properties),
-    }
-  );
+  return {
+    properties: {
+      ...properties,
+      ...optionalProperties,
+    },
+    required: Object.keys(properties),
+  };
 }
 
 export type PropertyDefinitions<T> = {
@@ -64,62 +60,70 @@ export class ObjectSchema<T, U, V> extends Schema<T & U & V> {
   }
 
   properties<W>(properties?: PropertyDefinitions<W>) {
-    this.internal.properties = resolveSchemaHash(properties);
+    const props = {
+      properties: resolveSchemaHash(properties)
+    }
 
     return this.extend(
-      mergeProperties(this.internal.properties, this.internal.optionalProperties)
+      mergeProperties(props.properties, this.internal.optionalProperties),
+      props,
     ) as any as ObjectSchema<W, U, V>;
   }
 
   addProperties<W>(properties: PropertyDefinitions<W>) {
-    this.internal.properties = Object.assign(
-      {},
-      this.internal.properties,
-      resolveSchemaHash(properties),
-    )
+    const props = {
+      properties: {
+        ...this.internal.properties,
+        ...resolveSchemaHash(properties),
+      }
+    }
 
     return this.extend(
-      mergeProperties(this.internal.properties, this.internal.optionalProperties)
+      mergeProperties(props.properties, this.internal.optionalProperties),
+      props,
     ) as any as ObjectSchema<T & W, U, V>;
   }
 
   optionalProperties<W>(properties?: PropertyDefinitions<W>) {
-    this.internal.optionalProperties = resolveSchemaHash(properties);
+    const props = {
+      optionalProperties: resolveSchemaHash(properties),
+    }
 
     return this.extend(
-      mergeProperties(this.internal.properties, this.internal.optionalProperties)
+      mergeProperties(this.internal.properties, props.optionalProperties),
+      props,
     ) as any as ObjectSchema<T, Partial<W>, V>;
   }
 
   addOptionalProperties<W>(properties: PropertyDefinitions<W>) {
-    this.internal.optionalProperties = Object.assign(
-      {},
-      this.internal.optionalProperties,
-      resolveSchemaHash(properties),
-    )
+    const props = {
+      optionalProperties: {
+        ...this.internal.optionalProperties,
+        ...resolveSchemaHash(properties),
+      }
+    }
 
     return this.extend(
-      mergeProperties(this.internal.properties, this.internal.optionalProperties)
+      mergeProperties(this.internal.properties, props.optionalProperties),
+      props,
     ) as any as ObjectSchema<T, U & Partial<W>, V>;
   }
 
   allowAdditionalProperties() {
     const newInstance = new ObjectSchema<T, U, {}>();
-    newInstance.schema = Object.assign(
-      {},
-      this.schema,
-      { additionalProperties: true },
-    );
+    newInstance.schema = {
+      ...this.schema,
+      additionalProperties: true,
+    }
     return newInstance;
   }
 
   disallowAdditionalProperties() {
     const newInstance = new ObjectSchema<T, U, Never>();
-    newInstance.schema = Object.assign(
-      {},
-      this.schema,
-      { additionalProperties: false },
-    );
+    newInstance.schema = {
+      ...this.schema,
+      additionalProperties: false,
+    }
     return newInstance;
   }
 
