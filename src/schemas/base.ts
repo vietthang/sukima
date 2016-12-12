@@ -65,3 +65,15 @@ export abstract class Schema<T> {
   }
 
 }
+
+export abstract class BaseSchema<T, U, V> extends Schema<T | U | V> {
+
+  abstract nullable(): BaseSchema<T, null, V>;
+
+  abstract notNullable(): BaseSchema<T, T, V>;
+
+  abstract optional(): BaseSchema<T, U, undefined>;
+
+  abstract required(): BaseSchema<T, U, T>;
+
+}

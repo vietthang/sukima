@@ -1,6 +1,6 @@
-import { Schema } from './base';
+import { BaseSchema } from './base';
 
-export class ArraySchema<T> extends Schema<T[]> {
+export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
 
   constructor() {
     super('array');
@@ -18,8 +18,8 @@ export class ArraySchema<T> extends Schema<T[]> {
     return this.extend({ uniqueItems });
   }
 
-  items<U>(items?: Schema<U>) {
-    const newInstance = new ArraySchema<U>();
+  items<T1, U1, V1>(items?: BaseSchema<T1, U1, V1>) {
+    const newInstance = new ArraySchema<T1, U1, V1>();
     newInstance.schema = Object.assign(
       {},
       this.schema,
@@ -28,6 +28,22 @@ export class ArraySchema<T> extends Schema<T[]> {
       }
     );
     return newInstance;
+  }
+
+  nullable(): ArraySchema<T, null, V> {
+    return this.extend({ 'x-nullable': true }) as ArraySchema<T, null, V>;
+  }
+
+  notNullable(): ArraySchema<T, T[], V> {
+    return this.extend({ 'x-nullable': false }) as ArraySchema<T, T[], V>;
+  }
+
+  optional(): ArraySchema<T, U, undefined> {
+    return this.extend({ 'x-optional': true }) as ArraySchema<T, U, undefined>;
+  }
+
+  required(): ArraySchema<T, U, T[]> {
+    return this.extend({ 'x-optional': false }) as ArraySchema<T, U, T[]>;
   }
 
 }
