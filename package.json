@@ -1,0 +1,31 @@
+{
+  "name": "overjoy-swag",
+  "version": "1.0.16",
+  "description": "",
+  "main": "build/src/index.js",
+  "scripts": {
+    "compile": "tsc",
+    "bundle": "dts-bundle --name overjoy-validate --main build/index.d.ts",
+    "build": "npm run compile && npm run bundle"
+  },
+  "author": "Yoshi",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bluebird": "^3.0.35",
+    "@types/chai": "^3.4.34",
+    "@types/chai-as-promised": "0.0.29",
+    "@types/mocha": "^2.2.32",
+    "@types/ramda": "0.0.2",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "dts-bundle": "^0.6.1",
+    "mocha": "^3.1.2",
+    "source-map-support": "^0.4.6",
+    "tslint": "^4.0.2",
+    "tslint-microsoft-contrib": "^2.0.13",
+    "typescript": "^2.1.4"
+  },
+  "dependencies": {
+  },
+  "typings": "build/src/overjoy-swag.d.ts"
+}
