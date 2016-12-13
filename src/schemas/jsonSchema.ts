@@ -1,5 +1,3 @@
-export type JsonSchemaTypes = 'array' | 'boolean' | 'integer' | 'number' | 'null' | 'object' | 'string';
-
 export type SchemaHash = {
   [key: string]: JsonSchema;
 };
@@ -136,7 +134,7 @@ export interface JsonSchema {
    *
    * An instance matches successfully if its primitive type is one of the types defined by keyword. Recall: "number" includes "integer".
    */
-  type?: JsonSchemaTypes | JsonSchemaTypes[];
+  type?: string | string[];
   /**
    * This keyword's value MUST be an array. This array MUST have at least one element.
    *

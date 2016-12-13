@@ -1,4 +1,23 @@
-import { JsonSchema, JsonSchemaTypes } from './jsonSchema';
+import { JsonSchema } from './jsonSchema';
+
+function evictUndefined(value: any): any {
+  if (value === null) {
+    return null;
+  }
+
+  if ('object' !== typeof value) {
+    return value;
+  }
+
+  return Object.keys(value)
+    .filter(key => value[key] !== undefined)
+    .reduce((prevValue, key) => {
+      return {
+        ...prevValue,
+        [key]: evictUndefined(value[key]),
+      };
+    }, {});
+}
 
 export abstract class Schema<T> {
 
@@ -8,8 +27,13 @@ export abstract class Schema<T> {
 
   protected internal: any;
 
-  protected constructor(type: JsonSchemaTypes) {
-    this.schema = { type };
+  protected constructor(type?: string) {
+    if (type !== undefined) {
+      this.schema = { type };
+    } else {
+      this.schema = {};
+    }
+
     this.internal = {};
   }
 
@@ -21,7 +45,7 @@ export abstract class Schema<T> {
   }
 
   getJsonSchema() {
-    return this.schema;
+    return evictUndefined(this.schema) as JsonSchema;
   }
 
   id(id?: string) {
@@ -42,6 +66,10 @@ export abstract class Schema<T> {
 
   exclusiveMaximum(exclusiveMaximum?: boolean) {
     return this.extend({ exclusiveMaximum });
+  }
+
+  exclusiveMinimum(exclusiveMinimum?: boolean) {
+    return this.extend({ exclusiveMinimum });
   }
 
   enum(values?: T[]) {
