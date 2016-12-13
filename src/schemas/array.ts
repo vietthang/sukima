@@ -1,4 +1,5 @@
-import { BaseSchema } from './base';
+import { Schema, BaseSchema } from './base';
+import { ObjectSchema, PropertyDefinitions } from './object';
 
 export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
 
@@ -18,16 +19,20 @@ export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
     return this.extend({ uniqueItems });
   }
 
-  items<T1, U1, V1>(items?: BaseSchema<T1, U1, V1>) {
-    const newInstance = new ArraySchema<T1, U1, V1>();
-    newInstance.schema = Object.assign(
-      {},
-      this.schema,
-      {
-        items: items ? items.getJsonSchema() : undefined,
-      }
-    );
-    return newInstance;
+  items<T1>(items?: Schema<T1>): ArraySchema<T1, T1[], T1[]>;
+
+  items<T1>(items?: PropertyDefinitions<T1>): ArraySchema<T1, T1[], T1[]>;
+
+  items(items: any) {
+    if (items === undefined) {
+      return this.extend({ items: undefined });
+    } else if (items instanceof Schema) {
+      return this.extend({ items: items.getJsonSchema() });
+    } else if ('object' === typeof items) {
+      return this.items(new ObjectSchema().properties(items));
+    } else {
+      throw new Error('Invalid type of items options.');
+    }
   }
 
   nullable(): ArraySchema<T, null, V> {
