@@ -1,4 +1,4 @@
-export type SchemaHash = {
+export type PropertyMap = {
   [key: string]: JsonSchema;
 };
 
@@ -104,11 +104,11 @@ export interface JsonSchema {
   /**
    * The value of "properties" MUST be an object. Each value of this object MUST be an object, and each object MUST be a valid JSON Schema.
    */
-  properties?: SchemaHash;
+  properties?: PropertyMap;
   /**
    * The value of "patternProperties" MUST be an object. Each property name of this object SHOULD be a valid regular expression, according to the ECMA 262 regular expression dialect. Each property value of this object MUST be an object, and each object MUST be a valid JSON Schema.
    */
-  patternProperties?: SchemaHash;
+  patternProperties?: PropertyMap;
   /**
    * This keyword's value MUST be an object. Each value of this object MUST be either an object or an array.
    *

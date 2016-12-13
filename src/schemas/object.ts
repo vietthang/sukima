@@ -1,11 +1,11 @@
 import { BaseSchema, Schema } from './base';
-import { SchemaHash } from './jsonSchema';
+import { PropertyMap } from './jsonSchema';
 
 function resolveSchemaHash<T>(properties?: PropertyDefinitions<T>) {
   if (!properties) {
-    return {} as SchemaHash;
+    return {} as PropertyMap;
   } else {
-    const schemaHash: SchemaHash = {};
+    const schemaHash: PropertyMap = {};
     const keys = Object.keys(properties) as any as (keyof T)[];
     keys.forEach((key) => {
       const options = properties[key];
@@ -31,8 +31,8 @@ function resolveSchemaHash<T>(properties?: PropertyDefinitions<T>) {
 }
 
 function mergeProperties(
-  properties: SchemaHash,
-  optionalProperties: SchemaHash) {
+  properties: PropertyMap,
+  optionalProperties: PropertyMap) {
   return {
     properties: {
       ...properties,
@@ -55,8 +55,8 @@ export interface Empty {
 export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 & U1 & V1, Nullable, Optional> {
 
   protected internal: {
-    properties: SchemaHash,
-    optionalProperties: SchemaHash,
+    properties: PropertyMap,
+    optionalProperties: PropertyMap,
   }
 
   constructor() {
