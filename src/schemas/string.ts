@@ -6,7 +6,7 @@ export class StringSchema<U, V> extends BaseSchema<string, U, V> {
     super('string');
   }
 
-  format(format?: 'uri' | 'email' | 'uuid') {
+  format(format?: string) {
     return this.extend({ format });
   }
 
