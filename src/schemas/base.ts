@@ -28,12 +28,7 @@ export abstract class Schema<T> {
   protected internal: any;
 
   protected constructor(type?: string) {
-    if (type !== undefined) {
-      this.schema = { type };
-    } else {
-      this.schema = {};
-    }
-
+    this.schema = { type };
     this.internal = {};
   }
 
