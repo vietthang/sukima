@@ -19,7 +19,11 @@ export class StringSchema<U, V> extends BaseSchema<string, U, V> {
   }
 
   pattern(pattern?: string | RegExp) {
-    return this.extend({ pattern: pattern ? pattern.toString() : undefined });
+    if (pattern instanceof RegExp) {
+      return this.extend({ pattern: pattern.source });
+    } else {
+      return this.extend({ pattern });
+    }
   }
 
   nullable(): StringSchema<null, V> {

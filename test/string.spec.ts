@@ -54,7 +54,7 @@ describe('String schema test', () => {
     schema = schema.pattern(RANDOM_STRING_1);
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' , pattern: RANDOM_STRING_1 });
     schema = schema.pattern(new RegExp(RANDOM_STRING_2));
-    assert.deepEqual(schema.getJsonSchema(), { type: 'string' , pattern: `/${RANDOM_STRING_2}/` });
+    assert.deepEqual(schema.getJsonSchema(), { type: 'string' , pattern: RANDOM_STRING_2 });
     schema = schema.pattern();
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' });
   })
