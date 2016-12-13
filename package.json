@@ -1,11 +1,11 @@
 {
-  "name": "overjoy-swag",
-  "version": "1.0.16",
-  "description": "",
-  "main": "build/src/index.js",
+  "name": "sukima",
+  "version": "0.0.1",
+  "description": "Type-safe library for build json schema.",
+  "main": "build/index.js",
   "scripts": {
     "compile": "tsc",
-    "bundle": "dts-bundle --name overjoy-validate --main build/index.d.ts",
+    "bundle": "dts-bundle --name sukima --main build/index.d.ts",
     "build": "npm run compile && npm run bundle"
   },
   "author": "Yoshi",
@@ -22,5 +22,5 @@
     "typescript": "^2.1.4"
   },
   "dependencies": {},
-  "typings": "build/src/overjoy-swag.d.ts"
+  "typings": "build/sukima.d.ts"
 }
