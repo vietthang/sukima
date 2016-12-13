@@ -180,7 +180,4 @@ export interface JsonSchema {
    */
   format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string;
 
-  'x-nullable'?: boolean;
-
-  'x-optional'?: boolean;
 }

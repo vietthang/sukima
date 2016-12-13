@@ -1,5 +1,5 @@
 import { BaseSchema, Schema } from './base';
-import { PropertyMap } from './jsonSchema';
+import { PropertyMap } from '../jsonSchema';
 
 function resolveSchemaHash<T>(properties?: PropertyDefinitions<T>) {
   if (!properties) {
@@ -61,6 +61,7 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
 
   constructor() {
     super('object');
+    this.schema['x-private'] = {};
   }
 
   maxProperties(maxProperties?: number) {
@@ -77,22 +78,20 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
     }
 
     return this.extend(
-      mergeProperties(props.properties, this.internal.optionalProperties),
-      props,
+      mergeProperties(props.properties, this.schema['x-private'].optionalProperties),
     ) as any as ObjectSchema<T2, U1, V1, T2 & U1 & V1, T2 & U1 & V1>;
   }
 
   addProperties<W>(properties: PropertyDefinitions<W>) {
     const props = {
       properties: {
-        ...this.internal.properties,
+        ...this.schema['x-private'].properties,
         ...resolveSchemaHash(properties),
       }
     }
 
     return this.extend(
-      mergeProperties(props.properties, this.internal.optionalProperties),
-      props,
+      mergeProperties(props.properties, this.schema['x-private'].optionalProperties),
     ) as any as ObjectSchema<T1 & W, U1, V1, T1 & W & U1 & V1, T1 & W & U1 & V1>;
   }
 
@@ -102,22 +101,20 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
     }
 
     return this.extend(
-      mergeProperties(this.internal.properties, props.optionalProperties),
-      props,
+      mergeProperties(this.schema['x-private'].properties, props.optionalProperties),
     ) as any as ObjectSchema<T1, Partial<W>, V1, T1 & Partial<W> & V1, T1 & Partial<W> & V1>;
   }
 
   addOptionalProperties<W>(properties: PropertyDefinitions<W>) {
     const props = {
       optionalProperties: {
-        ...this.internal.optionalProperties,
+        ...this.schema['x-private'].optionalProperties,
         ...resolveSchemaHash(properties),
       }
     }
 
     return this.extend(
-      mergeProperties(this.internal.properties, props.optionalProperties),
-      props,
+      mergeProperties(this.schema['x-private'].properties, props.optionalProperties),
     ) as any as ObjectSchema<T1, U1 & Partial<W>, V1, T1 & U1 & Partial<W> & V1, T1 & U1 & Partial<W> & V1>;
   }
 

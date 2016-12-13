@@ -1,4 +1,14 @@
-import { JsonSchema } from './jsonSchema';
+import { JsonSchema } from '../jsonSchema';
+
+export interface InternalJsonSchema extends JsonSchema {
+
+  'x-nullable'?: boolean;
+
+  'x-optional'?: boolean;
+
+  'x-private'?: any;
+
+}
 
 function evictUndefined(value: any): any {
   if (value === null) {
@@ -14,7 +24,7 @@ function evictUndefined(value: any): any {
   }
 
   return Object.keys(value)
-    .filter(key => value[key] !== undefined)
+    .filter(key => value[key] !== undefined && key !== 'x-private')
     .reduce((prevValue, key) => {
       return {
         ...prevValue,
@@ -27,19 +37,15 @@ export abstract class Schema<T> {
 
   public value = {} as T;
 
-  protected schema: JsonSchema;
-
-  protected internal: any;
+  protected schema: InternalJsonSchema;
 
   protected constructor(type?: string) {
     this.schema = { type };
-    this.internal = {};
   }
 
-  protected extend(properties?: Partial<JsonSchema>, internal?: any): this {
+  protected extend(properties?: Partial<InternalJsonSchema>): this {
     const cloned = Object.create(this.constructor.prototype);
     cloned.schema = { ...this.schema, ...properties };
-    cloned.internal = { ...this.internal, ...internal };
     return cloned;
   }
 
