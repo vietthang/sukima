@@ -9,6 +9,10 @@ function evictUndefined(value: any): any {
     return value;
   }
 
+  if (Array.isArray(value)) {
+    return value;
+  }
+
   return Object.keys(value)
     .filter(key => value[key] !== undefined)
     .reduce((prevValue, key) => {
