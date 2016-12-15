@@ -7,8 +7,10 @@
     "compile": "tsc",
     "bundle": "dts-bundle --name sukima --main build/src/index.d.ts",
     "test": "npm run compile && mocha build/test/**/*.spec.js",
-    "build": "npm run compile && npm run bundle"
+    "build": "npm run compile && npm run bundle",
+    "prepublish": "npm run build"
   },
+  "homepage": "https://github.com/vietthang/sukima",
   "author": "Yoshi",
   "license": "MIT",
   "devDependencies": {
