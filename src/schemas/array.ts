@@ -1,7 +1,7 @@
 import { Schema, BaseSchema } from './base';
 import { ObjectSchema, PropertyDefinitions } from './object';
 
-export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
+export class BaseArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
 
   constructor() {
     super('array');
@@ -19,9 +19,9 @@ export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
     return this.extend({ uniqueItems });
   }
 
-  items<T1>(items?: Schema<T1>): ArraySchema<T1, T1[], T1[]>;
+  items<T1>(items?: Schema<T1>): BaseArraySchema<T1, T1[], T1[]>;
 
-  items<T1>(items?: PropertyDefinitions<T1>): ArraySchema<T1, T1[], T1[]>;
+  items<T1>(items?: PropertyDefinitions<T1>): BaseArraySchema<T1, T1[], T1[]>;
 
   items(items: any) {
     if (items === undefined) {
@@ -35,20 +35,22 @@ export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
     }
   }
 
-  nullable(): ArraySchema<T, null, V> {
-    return this.extend({ 'x-nullable': true }) as ArraySchema<T, null, V>;
+  nullable(): BaseArraySchema<T, null, V> {
+    return super.nullable() as BaseArraySchema<T, null, V>;
   }
 
-  notNullable(): ArraySchema<T, T[], V> {
-    return this.extend({ 'x-nullable': false }) as ArraySchema<T, T[], V>;
+  notNullable(): BaseArraySchema<T, T[], V> {
+    return super.notNullable() as BaseArraySchema<T, T[], V>;
   }
 
-  optional(): ArraySchema<T, U, undefined> {
-    return this.extend({ 'x-optional': true }) as ArraySchema<T, U, undefined>;
+  optional(): BaseArraySchema<T, U, undefined> {
+    return super.optional() as BaseArraySchema<T, U, undefined>;
   }
 
-  required(): ArraySchema<T, U, T[]> {
-    return this.extend({ 'x-optional': false }) as ArraySchema<T, U, T[]>;
+  required(): BaseArraySchema<T, U, T[]> {
+    return super.required() as BaseArraySchema<T, U, T[]>;
   }
 
 }
+
+export class ArraySchema extends BaseArraySchema<any, any, any> {};

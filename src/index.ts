@@ -1,34 +1,34 @@
 import { StringSchema } from './schemas/string';
 import { NumberSchema } from './schemas/number';
 import { BooleanSchema } from './schemas/boolean';
-import { ObjectSchema, Empty } from './schemas/object';
+import { ObjectSchema } from './schemas/object';
 import { ArraySchema } from './schemas/array';
 import { NullSchema } from './schemas/null';
 
 export function string() {
-  return new StringSchema<string, string>();
+  return new StringSchema();
 }
 
 export function number() {
-  return new NumberSchema<number, number>();
+  return new NumberSchema();
 }
 
 export function integer() {
-  return new NumberSchema<number, number>('integer');
+  return new NumberSchema('integer');
 }
 
 export function boolean() {
-  return new BooleanSchema<boolean, boolean>();
+  return new BooleanSchema();
 }
 
 export function object() {
-  return new ObjectSchema<Empty, Empty, Empty, Empty, Empty>();
+  return new ObjectSchema();
 }
 
 export function array() {
-  return new ArraySchema<any, any, any>();
+  return new ArraySchema();
 }
 
 export function nil() {
-  return new NullSchema<null>();
+  return new NullSchema();
 }

@@ -101,12 +101,20 @@ export abstract class Schema<T> {
 
 export abstract class BaseSchema<T, U, V> extends Schema<T | U | V> {
 
-  abstract nullable(): BaseSchema<T, null, V>;
+  nullable(): BaseSchema<T, null, V> {
+    return this.extend({ 'x-nullable': true }) as BaseSchema<T, null, V>;
+  }
 
-  abstract notNullable(): BaseSchema<T, T, V>;
+  notNullable(): BaseSchema<T, T, V> {
+    return this.extend({ 'x-nullable': false }) as BaseSchema<T, T, V>;
+  }
 
-  abstract optional(): BaseSchema<T, U, undefined>;
+  optional(): BaseSchema<T, U, undefined> {
+    return this.extend({ 'x-optional': true }) as BaseSchema<T, U, undefined>;
+  }
 
-  abstract required(): BaseSchema<T, U, T>;
+  required(): BaseSchema<T, U, T> {
+    return this.extend({ 'x-optional': false }) as BaseSchema<T, U, T>;
+  }
 
 }

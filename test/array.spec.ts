@@ -5,21 +5,17 @@ import { ArraySchema } from '../src/schemas/array';
 import { StringSchema } from '../src/schemas/string';
 import { NumberSchema } from '../src/schemas/number';
 
-class SchemaImpl extends ArraySchema<any, any, any> {};
-class StringSchemaImpl extends StringSchema<string, string> {};
-class NumberSchemaImpl extends NumberSchema<number, number> {};
-
 const RANDOM_NUMBER_1 = Math.random();
 const RANDOM_NUMBER_2 = Math.random();
 
 describe('String schema test', () => {
   it('Should create simple string schema correctly', () => {
-    const schema = new SchemaImpl();
+    const schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
   });
 
   it('Should set, overwrite & remove maxItems correctly', () => {
-    let schema = new SchemaImpl();
+    let schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
     schema = schema.maxItems(RANDOM_NUMBER_1);
     assert.deepEqual(schema.getJsonSchema(), { type: 'array', maxItems: RANDOM_NUMBER_1 });
@@ -30,7 +26,7 @@ describe('String schema test', () => {
   })
 
   it('Should set, overwrite & remove minItems correctly', () => {
-    let schema = new SchemaImpl();
+    let schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
     schema = schema.minItems(RANDOM_NUMBER_1);
     assert.deepEqual(schema.getJsonSchema(), { type: 'array', minItems: RANDOM_NUMBER_1 });
@@ -41,7 +37,7 @@ describe('String schema test', () => {
   })
 
   it('Should set, overwrite & remove uniqueItems correctly', () => {
-    let schema = new SchemaImpl();
+    let schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
     schema = schema.uniqueItems(false);
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' , uniqueItems: false });
@@ -52,14 +48,14 @@ describe('String schema test', () => {
   })
 
   it('Should set, overwrite & remove items correctly', () => {
-    let schema = new SchemaImpl();
+    let schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
-    schema = schema.items(new StringSchemaImpl());
+    schema = schema.items(new StringSchema());
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' , items: { type: 'string' } });
     schema = schema.items({
-      stringKey: new StringSchemaImpl(),
+      stringKey: new StringSchema(),
       objectKey: {
-        numberKey: new NumberSchemaImpl(),
+        numberKey: new NumberSchema(),
       }
     });
     assert.deepEqual(
@@ -91,7 +87,7 @@ describe('String schema test', () => {
   })
 
   it('Should interact with nullable & optional correctly', () => {
-    const schema = new SchemaImpl();
+    const schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array'});
     assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'array', 'x-nullable': true });
     assert.deepEqual(schema.nullable().notNullable().getJsonSchema(), { type: 'array', 'x-nullable': false });

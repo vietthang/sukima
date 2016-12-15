@@ -2,16 +2,14 @@ import 'mocha';
 import assert = require('assert');
 import { NullSchema } from '../src/schemas/null';
 
-class SchemaImpl extends NullSchema<null> {}
-
 describe('Boolean schema test', () => {
   it('Should create simple boolean schema correctly', () => {
-    const schema = new SchemaImpl();
+    const schema = new NullSchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'null' });
   })
 
   it('Should interact with nullable & optional correctly', () => {
-    const schema = new SchemaImpl();
+    const schema = new NullSchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'null'});
     assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'null', 'x-nullable': true });
     assert.deepEqual(schema.nullable().notNullable().getJsonSchema(), { type: 'null', 'x-nullable': false });

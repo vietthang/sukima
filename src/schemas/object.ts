@@ -52,7 +52,7 @@ export interface Empty {
   readonly __never?: never;
 }
 
-export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 & U1 & V1, Nullable, Optional> {
+export class BaseObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 & U1 & V1, Nullable, Optional> {
 
   protected internal: {
     properties: PropertyMap,
@@ -79,7 +79,7 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
 
     return this.extend(
       mergeProperties(props.properties, this.schema['x-private'].optionalProperties),
-    ) as any as ObjectSchema<T2, U1, V1, T2 & U1 & V1, T2 & U1 & V1>;
+    ) as any as BaseObjectSchema<T2, U1, V1, T2 & U1 & V1, T2 & U1 & V1>;
   }
 
   addProperties<W>(properties: PropertyDefinitions<W>) {
@@ -92,7 +92,7 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
 
     return this.extend(
       mergeProperties(props.properties, this.schema['x-private'].optionalProperties),
-    ) as any as ObjectSchema<T1 & W, U1, V1, T1 & W & U1 & V1, T1 & W & U1 & V1>;
+    ) as any as BaseObjectSchema<T1 & W, U1, V1, T1 & W & U1 & V1, T1 & W & U1 & V1>;
   }
 
   optionalProperties<W>(properties?: PropertyDefinitions<W>) {
@@ -102,7 +102,7 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
 
     return this.extend(
       mergeProperties(this.schema['x-private'].properties, props.optionalProperties),
-    ) as any as ObjectSchema<T1, Partial<W>, V1, T1 & Partial<W> & V1, T1 & Partial<W> & V1>;
+    ) as any as BaseObjectSchema<T1, Partial<W>, V1, T1 & Partial<W> & V1, T1 & Partial<W> & V1>;
   }
 
   addOptionalProperties<W>(properties: PropertyDefinitions<W>) {
@@ -115,35 +115,37 @@ export class ObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema<T1 
 
     return this.extend(
       mergeProperties(this.schema['x-private'].properties, props.optionalProperties),
-    ) as any as ObjectSchema<T1, U1 & Partial<W>, V1, T1 & U1 & Partial<W> & V1, T1 & U1 & Partial<W> & V1>;
+    ) as any as BaseObjectSchema<T1, U1 & Partial<W>, V1, T1 & U1 & Partial<W> & V1, T1 & U1 & Partial<W> & V1>;
   }
 
   allowAdditionalProperties() {
     return this.extend(
       { additionalProperties: true }
-    ) as any as ObjectSchema<T1, U1, {}, Nullable, Optional>;
+    ) as any as BaseObjectSchema<T1, U1, {}, Nullable, Optional>;
   }
 
   disallowAdditionalProperties() {
     return this.extend(
       { additionalProperties: false }
-    ) as any as ObjectSchema<T1, U1, Empty, Nullable, Optional>;
+    ) as any as BaseObjectSchema<T1, U1, Empty, Nullable, Optional>;
   }
 
-  nullable(): ObjectSchema<T1, U1, V1, null, Optional> {
-    return this.extend({ 'x-nullable': true }) as ObjectSchema<T1, U1, V1, null, Optional>;
+  nullable(): BaseObjectSchema<T1, U1, V1, null, Optional> {
+    return super.notNullable() as BaseObjectSchema<T1, U1, V1, null, Optional>;
   }
 
-  notNullable(): ObjectSchema<T1, U1, V1, T1 & U1 & V1, Optional> {
-    return this.extend({ 'x-nullable': false }) as ObjectSchema<T1, U1, V1, T1 & U1 & V1, Optional>;
+  notNullable(): BaseObjectSchema<T1, U1, V1, T1 & U1 & V1, Optional> {
+    return super.notNullable() as BaseObjectSchema<T1, U1, V1, T1 & U1 & V1, Optional>;
   }
 
-  optional(): ObjectSchema<T1, U1, V1, Nullable, undefined> {
-    return this.extend({ 'x-optional': true }) as ObjectSchema<T1, U1, V1, Nullable, undefined>;
+  optional(): BaseObjectSchema<T1, U1, V1, Nullable, undefined> {
+    return super.optional() as BaseObjectSchema<T1, U1, V1, Nullable, undefined>;
   }
 
-  required(): ObjectSchema<T1, U1, V1, Nullable, T1 & U1 & V1> {
-    return this.extend({ 'x-optional': false }) as ObjectSchema<T1, U1, V1, Nullable, T1 & U1 & V1>;
+  required(): BaseObjectSchema<T1, U1, V1, Nullable, T1 & U1 & V1> {
+    return super.required() as BaseObjectSchema<T1, U1, V1, Nullable, T1 & U1 & V1>;
   }
 
 }
+
+export class ObjectSchema extends BaseObjectSchema<Empty, Empty, Empty, Empty, Empty> {};
