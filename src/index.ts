@@ -32,3 +32,5 @@ export function array() {
 export function nil() {
   return new NullSchema();
 }
+
+export { Schema } from './schemas/base';
