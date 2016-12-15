@@ -8,7 +8,8 @@
     "bundle": "dts-bundle --name sukima --main build/src/index.d.ts",
     "test": "npm run compile && mocha build/test/**/*.spec.js",
     "build": "npm run compile && npm run bundle",
-    "prepublish": "npm run build"
+    "clean": "rm -rf build",
+    "prepublish": "npm run clean && npm run build"
   },
   "homepage": "https://github.com/vietthang/sukima",
   "author": "Yoshi",
