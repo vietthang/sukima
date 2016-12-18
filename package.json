@@ -1,6 +1,6 @@
 {
   "name": "sukima",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Type-safe library for build json schema.",
   "main": "build/src/index.js",
   "scripts": {
