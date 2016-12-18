@@ -33,17 +33,17 @@ function evictUndefined(value: any): any {
     }, {});
 }
 
-export abstract class Schema<T> {
+export class Schema<T> {
 
   public value = {} as T;
 
   protected schema: InternalJsonSchema;
 
-  protected constructor(type?: string) {
+  public constructor(type?: string) {
     this.schema = { type };
   }
 
-  protected extend(properties?: Partial<InternalJsonSchema>): this {
+  public extend(properties?: Partial<InternalJsonSchema>): this {
     const cloned = Object.create(this.constructor.prototype);
     cloned.schema = { ...this.schema, ...properties };
     return cloned;
