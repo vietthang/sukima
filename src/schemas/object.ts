@@ -146,22 +146,6 @@ export class BaseObjectSchema<T1, U1, V1, Nullable, Optional> extends BaseSchema
     return super.required() as BaseObjectSchema<T1, U1, V1, Nullable, T1 & U1 & V1>;
   }
 
-  getPropertySchema<K extends keyof T1>(key: K): Schema<T1[K]> {
-    if (Array.isArray(this.schema.type)) {
-      throw new Error('JSON schema with type is an array is not supported.');
-    }
-    if (!this.schema.type) {
-      throw new Error('JSON schema does not contain type.');
-    }
-    if (!this.schema.properties) {
-      throw new Error('JSON schema does not contain properties.');
-    }
-    if (!this.schema.properties[key]) {
-      throw new Error(`JSON schema does not contain key ${key}`);
-    }
-    return new Schema<T1[K]>(this.schema.type).extend(this.schema.properties[key]);
-  }
-
 }
 
 export class ObjectSchema extends BaseObjectSchema<Empty, Empty, Empty, Empty, Empty> {};

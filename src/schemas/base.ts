@@ -97,6 +97,22 @@ export class Schema<T> {
     return this.extend({ oneOf: schemas ? schemas.map(subSchema => subSchema.getJsonSchema()) : undefined });
   }
 
+  getPropertySchema<K extends keyof T>(key: K): Schema<T[K]> {
+    if (Array.isArray(this.schema.type)) {
+      throw new Error('JSON schema with type is an array is not supported.');
+    }
+    if (!this.schema.type) {
+      throw new Error('JSON schema does not contain type.');
+    }
+    if (!this.schema.properties) {
+      throw new Error('JSON schema does not contain properties.');
+    }
+    if (!this.schema.properties[key]) {
+      throw new Error(`JSON schema does not contain key ${key}`);
+    }
+    return new Schema<T[K]>(this.schema.type).extend(this.schema.properties[key]);
+  }
+
 }
 
 export abstract class BaseSchema<T, U, V> extends Schema<T | U | V> {
