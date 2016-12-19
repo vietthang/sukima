@@ -113,6 +113,10 @@ export class Schema<T> {
     return new Schema<T[K]>(this.schema.type).extend(this.schema.properties[key]);
   }
 
+  getPartialSchema(): Schema<Partial<T>> {
+    return this.extend({ required: undefined }) as Schema<Partial<T>>;
+  }
+
 }
 
 export abstract class BaseSchema<T, U, V> extends Schema<T | U | V> {
