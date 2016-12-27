@@ -36,3 +36,5 @@ export function nil() {
 export { Schema } from './schemas/base';
 
 export { JsonSchema } from './jsonSchema';
+
+export { validate } from './validate';

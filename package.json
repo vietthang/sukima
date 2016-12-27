@@ -26,6 +26,8 @@
     "tslint-microsoft-contrib": "^2.0.13",
     "typescript": "^2.1.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ajv": "^4.10.3"
+  },
   "typings": "build/src/sukima.d.ts"
 }
