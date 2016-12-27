@@ -83,18 +83,6 @@ export class Schema<T> {
     return this.extend({ not: schema ? schema.getJsonSchema() : undefined });
   }
 
-  allOf(schemas?: Schema<T>[]) {
-    return this.extend({ allOf: schemas ? schemas.map(subSchema => subSchema.getJsonSchema()) : undefined });
-  }
-
-  anyOf(schemas?: Schema<T>[]) {
-    return this.extend({ anyOf: schemas ? schemas.map(subSchema => subSchema.getJsonSchema()) : undefined });
-  }
-
-  oneOf(schemas?: Schema<T>[]) {
-    return this.extend({ oneOf: schemas ? schemas.map(subSchema => subSchema.getJsonSchema()) : undefined });
-  }
-
   getPropertySchema<K extends keyof T>(key: K): Schema<T[K]> {
     if (Array.isArray(this.schema.type)) {
       throw new Error('JSON schema with type is an array is not supported.');
