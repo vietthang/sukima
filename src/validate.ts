@@ -7,16 +7,6 @@ const ajv = new Ajv({
   coerceTypes: 'array',
 });
 
-class UnknownError extends Error {
-
-  constructor() {
-    super('Unknown Error');
-  }
-
-}
-
-export type ValidateCallback = (error: Error | null, output?: any) => void;
-
 export async function validate<T>(schema: Schema<T>, value: any): Promise<T>;
 
 export async function validate(schema: JsonSchema, value: any): Promise<any>;
@@ -30,7 +20,7 @@ export async function validate(schema: any, value: any): Promise<any> {
   });
   const result = await validate(clonedAttributes);
   if (!result) {
-    throw new UnknownError();
+    throw new Error('Unknown error');
   } else {
     return clonedAttributes;
   }

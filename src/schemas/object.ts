@@ -68,7 +68,7 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
         properties: properties,
         required: required,
       },
-    ) as any as BaseObjectSchema<T2, U>;
+    ) as any as BaseObjectSchema<T2, T2>;
   }
 
   addProperties<W>(definitions: PropertyDefinitions<W>) {
@@ -83,7 +83,7 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
         properties,
         required,
       },
-    ) as any as BaseObjectSchema<T & W, U>;
+    ) as any as BaseObjectSchema<T & W, T & W>;
   }
 
   additionalProperties(allow: boolean = true) {
