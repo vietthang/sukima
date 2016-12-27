@@ -56,7 +56,7 @@ describe('String schema test', () => {
       stringKey: new StringSchema(),
       objectKey: {
         numberKey: new NumberSchema(),
-      }
+      },
     });
     assert.deepEqual(
       schema.getJsonSchema(),
@@ -72,7 +72,7 @@ describe('String schema test', () => {
               type: 'object',
               properties: {
                 numberKey: {
-                  type: 'number'
+                  type: 'number',
                 },
               },
               required: [ 'numberKey' ],

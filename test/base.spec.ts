@@ -17,7 +17,7 @@ describe('Base schema test', () => {
   it('Should create simple object schema correctly', () => {
     const schema = new SchemaImpl('any');
     assert.deepEqual(schema.getJsonSchema(), { type: 'any'});
-  })
+  });
 
   it('Should set, overwrite & remove id correctly', () => {
     let schema = new SchemaImpl('any');
@@ -28,7 +28,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', id: RANDOM_STRING_2 });
     schema = schema.id();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove title correctly', () => {
     let schema = new SchemaImpl('any');
@@ -39,7 +39,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', title: RANDOM_STRING_2 });
     schema = schema.title();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove description correctly', () => {
     let schema = new SchemaImpl('any');
@@ -50,7 +50,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', description: RANDOM_STRING_2 });
     schema = schema.description();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove default correctly', () => {
     let schema = new SchemaImpl('any');
@@ -61,7 +61,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', default: RANDOM_STRING_2 });
     schema = schema.default();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove exclusiveMaximum correctly', () => {
     let schema = new SchemaImpl('any');
@@ -72,7 +72,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', exclusiveMaximum: true });
     schema = schema.exclusiveMaximum();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove exclusiveMinimum correctly', () => {
     let schema = new SchemaImpl('any');
@@ -83,7 +83,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', exclusiveMinimum: true });
     schema = schema.exclusiveMinimum();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 
   it('Should set, overwrite & remove enum correctly', () => {
     let schema = new SchemaImpl('any');
@@ -94,5 +94,5 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'any', enum: [RANDOM_STRING_1, RANDOM_STRING_2] });
     schema = schema.enum();
     assert.deepEqual(schema.getJsonSchema(), { type: 'any' });
-  })
+  });
 });

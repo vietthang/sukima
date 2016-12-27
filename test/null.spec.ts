@@ -6,7 +6,7 @@ describe('Boolean schema test', () => {
   it('Should create simple boolean schema correctly', () => {
     const schema = new NullSchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'null' });
-  })
+  });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NullSchema();

@@ -22,7 +22,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'string', format: RANDOM_STRING_2 });
     schema = schema.format();
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' });
-  })
+  });
 
   it('Should set, overwrite & remove maxLength correctly', () => {
     let schema = new StringSchema();
@@ -33,7 +33,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'string', maxLength: RANDOM_NUMBER_2 });
     schema = schema.maxLength();
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' });
-  })
+  });
 
   it('Should set, overwrite & remove minLength correctly', () => {
     let schema = new StringSchema();
@@ -44,7 +44,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' , minLength: RANDOM_NUMBER_2 });
     schema = schema.minLength();
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' });
-  })
+  });
 
   it('Should set, overwrite & remove pattern correctly', () => {
     let schema = new StringSchema();
@@ -55,7 +55,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' , pattern: RANDOM_STRING_2 });
     schema = schema.pattern();
     assert.deepEqual(schema.getJsonSchema(), { type: 'string' });
-  })
+  });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new StringSchema();

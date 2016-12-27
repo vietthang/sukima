@@ -25,7 +25,7 @@ describe('Number schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'number', multipleOf: RANDOM_NUMBER_2 });
     schema = schema.multipleOf();
     assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
-  })
+  });
 
   it('Should set, overwrite & remove maximum correctly', () => {
     let schema = new NumberSchema();
@@ -36,7 +36,7 @@ describe('Number schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'number', maximum: RANDOM_NUMBER_2 });
     schema = schema.maximum();
     assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
-  })
+  });
 
   it('Should set, overwrite & remove minimum correctly', () => {
     let schema = new NumberSchema();
@@ -47,7 +47,7 @@ describe('Number schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'number', minimum: RANDOM_NUMBER_2 });
     schema = schema.minimum();
     assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
-  })
+  });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NumberSchema();
