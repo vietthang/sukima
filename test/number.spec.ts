@@ -53,10 +53,7 @@ describe('Number schema test', () => {
     const schema = new NumberSchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'number'});
     assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'number', 'x-nullable': true });
-    assert.deepEqual(schema.nullable().notNullable().getJsonSchema(), { type: 'number', 'x-nullable': false });
-    assert.deepEqual(schema.notNullable().getJsonSchema(), { type: 'number', 'x-nullable': false });
     assert.deepEqual(schema.optional().getJsonSchema(), { type: 'number', 'x-optional': true });
-    assert.deepEqual(schema.required().getJsonSchema(), { type: 'number', 'x-optional': false });
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
       { type: 'number', 'x-optional': true, 'x-nullable': true },

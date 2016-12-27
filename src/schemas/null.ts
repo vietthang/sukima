@@ -1,6 +1,6 @@
-import { BaseSchema } from './base';
+import { Schema } from './base';
 
-export class NullSchema extends BaseSchema<null, null, null> {
+export class NullSchema extends Schema<null> {
 
   constructor() {
     super('null');

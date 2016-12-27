@@ -12,10 +12,7 @@ describe('Boolean schema test', () => {
     const schema = new NullSchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'null'});
     assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'null', 'x-nullable': true });
-    assert.deepEqual(schema.nullable().notNullable().getJsonSchema(), { type: 'null', 'x-nullable': false });
-    assert.deepEqual(schema.notNullable().getJsonSchema(), { type: 'null', 'x-nullable': false });
     assert.deepEqual(schema.optional().getJsonSchema(), { type: 'null', 'x-optional': true });
-    assert.deepEqual(schema.required().getJsonSchema(), { type: 'null', 'x-optional': false });
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
       { type: 'null', 'x-optional': true, 'x-nullable': true },

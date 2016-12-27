@@ -6,8 +6,6 @@ export interface InternalJsonSchema extends JsonSchema {
 
   'x-optional'?: boolean;
 
-  'x-private'?: any;
-
 }
 
 function evictUndefined(value: any): any {
@@ -117,24 +115,12 @@ export class Schema<T> {
     return this.extend({ required: undefined }) as Schema<Partial<T>>;
   }
 
-}
-
-export abstract class BaseSchema<T, U, V> extends Schema<T | U | V> {
-
-  nullable(): BaseSchema<T, null, V> {
-    return this.extend({ 'x-nullable': true }) as BaseSchema<T, null, V>;
+  nullable(): Schema<T | null> {
+    return this.extend({ 'x-nullable': true }) as Schema<T | null>;
   }
 
-  notNullable(): BaseSchema<T, T, V> {
-    return this.extend({ 'x-nullable': false }) as BaseSchema<T, T, V>;
-  }
-
-  optional(): BaseSchema<T, U, undefined> {
-    return this.extend({ 'x-optional': true }) as BaseSchema<T, U, undefined>;
-  }
-
-  required(): BaseSchema<T, U, T> {
-    return this.extend({ 'x-optional': false }) as BaseSchema<T, U, T>;
+  optional(): Schema<T | undefined> {
+    return this.extend({ 'x-optional': true }) as Schema<T | undefined>;
   }
 
 }

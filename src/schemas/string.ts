@@ -1,6 +1,6 @@
-import { BaseSchema } from './base';
+import { Schema } from './base';
 
-export class BaseStringSchema<U, V> extends BaseSchema<string, U, V> {
+export class BaseStringSchema<T> extends Schema<T> {
 
   constructor() {
     super('string');
@@ -26,22 +26,14 @@ export class BaseStringSchema<U, V> extends BaseSchema<string, U, V> {
     }
   }
 
-  nullable(): BaseStringSchema<null, V> {
-    return super.nullable() as BaseStringSchema<null, V>;
+  nullable(): BaseStringSchema<T | null> {
+    return super.nullable() as BaseStringSchema<T | null>;
   }
 
-  notNullable(): BaseStringSchema<string, V> {
-    return super.notNullable() as BaseStringSchema<string, V>;
-  }
-
-  optional(): BaseStringSchema<U, undefined> {
-    return super.optional() as BaseStringSchema<U, undefined>;
-  }
-
-  required(): BaseStringSchema<U, string> {
-    return super.required() as BaseStringSchema<U, string>;
+  optional(): BaseStringSchema<T | undefined> {
+    return super.optional() as BaseStringSchema<T | undefined>;
   }
 
 }
 
-export class StringSchema extends BaseStringSchema<string, string> {}
+export class StringSchema extends BaseStringSchema<string> {}

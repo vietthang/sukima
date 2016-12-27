@@ -90,10 +90,7 @@ describe('String schema test', () => {
     const schema = new ArraySchema();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array'});
     assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'array', 'x-nullable': true });
-    assert.deepEqual(schema.nullable().notNullable().getJsonSchema(), { type: 'array', 'x-nullable': false });
-    assert.deepEqual(schema.notNullable().getJsonSchema(), { type: 'array', 'x-nullable': false });
     assert.deepEqual(schema.optional().getJsonSchema(), { type: 'array', 'x-optional': true });
-    assert.deepEqual(schema.required().getJsonSchema(), { type: 'array', 'x-optional': false });
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
       { type: 'array', 'x-optional': true, 'x-nullable': true },

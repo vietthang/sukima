@@ -1,6 +1,6 @@
-import { BaseSchema } from './base';
+import { Schema } from './base';
 
-export class BaseNumberSchema<U, V> extends BaseSchema<number, U, V> {
+export class BaseNumberSchema<T> extends Schema<T> {
 
   constructor(type: 'number' | 'integer' = 'number') {
     super(type);
@@ -18,22 +18,14 @@ export class BaseNumberSchema<U, V> extends BaseSchema<number, U, V> {
     return this.extend({ minimum });
   }
 
-  nullable(): BaseNumberSchema<null, V> {
-    return super.nullable() as BaseNumberSchema<null, V>;
+  nullable(): BaseNumberSchema<T | null> {
+    return super.nullable() as BaseNumberSchema<T | null>;
   }
 
-  notNullable(): BaseNumberSchema<number, V> {
-    return super.notNullable() as BaseNumberSchema<number, V>;
-  }
-
-  optional(): BaseNumberSchema<U, undefined> {
-    return super.optional() as BaseNumberSchema<U, undefined>;
-  }
-
-  required(): BaseNumberSchema<U, number> {
-    return super.required() as BaseNumberSchema<U, number>;
+  optional(): BaseNumberSchema<T | undefined> {
+    return super.optional() as BaseNumberSchema<T | undefined>;
   }
 
 }
 
-export class NumberSchema extends BaseNumberSchema<number, number> {};
+export class NumberSchema extends BaseNumberSchema<number> {};
