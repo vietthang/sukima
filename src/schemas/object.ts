@@ -34,7 +34,7 @@ function getRequiredProperties(properties: PropertyMap): string[] {
   return Object.keys(properties).filter((key) => {
     const property: InternalJsonSchema = properties[key];
     return !property['x-optional'];
-  })
+  });
 }
 
 export type PropertyDefinitions<T> = {

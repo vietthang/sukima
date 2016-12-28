@@ -29,7 +29,7 @@ export function allOf<T0, T1, T2, T3, T4>(
 export function allOf(...schemas: any[]): any {
   return new Schema().extend({
     allOf: schemas.map(schema => schema.getJsonSchema()),
-  })
+  });
 };
 
 export function anyOf<T0, T1>(
@@ -60,8 +60,8 @@ export function anyOf<T0, T1, T2, T3, T4>(
 
 export function anyOf(...schemas: any[]): any {
   return new Schema().extend({
-    oneOf: schemas.map(schema => schema.getJsonSchema()),
-  })
+    anyOf: schemas.map(schema => schema.getJsonSchema()),
+  });
 };
 
 export function oneOf<T0, T1>(
@@ -93,5 +93,5 @@ export function oneOf<T0, T1, T2, T3, T4>(
 export function oneOf(...schemas: any[]): any {
   return new Schema().extend({
     oneOf: schemas.map(schema => schema.getJsonSchema()),
-  })
+  });
 };
