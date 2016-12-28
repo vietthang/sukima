@@ -51,12 +51,54 @@ describe('Number schema test', () => {
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NumberSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number'});
-    assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'number', 'x-nullable': true });
-    assert.deepEqual(schema.optional().getJsonSchema(), { type: 'number', 'x-optional': true });
+
+    assert.deepEqual(
+      schema.getJsonSchema(),
+      {
+        type: 'number',
+      },
+    );
+
+    assert.deepEqual(
+      schema.nullable().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ null ],
+          },
+          {
+            type: 'number',
+          },
+        ]
+      },
+    );
+
+    assert.deepEqual(
+      schema.optional().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ undefined ],
+          },
+          {
+            type: 'number',
+          },
+        ]
+      },
+    );
+
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
-      { type: 'number', 'x-optional': true, 'x-nullable': true },
+      {
+        anyOf: [
+          {
+            enum: [ null, undefined ],
+          },
+          {
+            type: 'number',
+          },
+        ]
+      },
     );
   });
 });

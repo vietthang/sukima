@@ -59,12 +59,54 @@ describe('String schema test', () => {
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new StringSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'string'});
-    assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'string', 'x-nullable': true });
-    assert.deepEqual(schema.optional().getJsonSchema(), { type: 'string', 'x-optional': true });
+
+    assert.deepEqual(
+      schema.getJsonSchema(),
+      {
+        type: 'string',
+      },
+    );
+
+    assert.deepEqual(
+      schema.nullable().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ null ],
+          },
+          {
+            type: 'string',
+          },
+        ]
+      },
+    );
+
+    assert.deepEqual(
+      schema.optional().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ undefined ],
+          },
+          {
+            type: 'string',
+          },
+        ]
+      },
+    );
+
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
-      { type: 'string', 'x-optional': true, 'x-nullable': true },
+      {
+        anyOf: [
+          {
+            enum: [ null, undefined ],
+          },
+          {
+            type: 'string',
+          },
+        ]
+      },
     );
   });
 });

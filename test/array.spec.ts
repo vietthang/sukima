@@ -23,7 +23,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'array', maxItems: RANDOM_NUMBER_2 });
     schema = schema.maxItems();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
-  })
+  });
 
   it('Should set, overwrite & remove minItems correctly', () => {
     let schema = new ArraySchema();
@@ -34,7 +34,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'array', minItems: RANDOM_NUMBER_2 });
     schema = schema.minItems();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
-  })
+  });
 
   it('Should set, overwrite & remove uniqueItems correctly', () => {
     let schema = new ArraySchema();
@@ -45,7 +45,7 @@ describe('String schema test', () => {
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' , uniqueItems: true });
     schema = schema.uniqueItems();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
-  })
+  });
 
   it('Should set, overwrite & remove items correctly', () => {
     let schema = new ArraySchema();
@@ -84,16 +84,58 @@ describe('String schema test', () => {
     );
     schema = schema.items();
     assert.deepEqual(schema.getJsonSchema(), { type: 'array' });
-  })
+  });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new ArraySchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'array'});
-    assert.deepEqual(schema.nullable().getJsonSchema(), { type: 'array', 'x-nullable': true });
-    assert.deepEqual(schema.optional().getJsonSchema(), { type: 'array', 'x-optional': true });
+
+    assert.deepEqual(
+      schema.getJsonSchema(),
+      {
+        type: 'array',
+      },
+    );
+
+    assert.deepEqual(
+      schema.nullable().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ null ],
+          },
+          {
+            type: 'array',
+          },
+        ]
+      },
+    );
+
+    assert.deepEqual(
+      schema.optional().getJsonSchema(),
+      {
+        anyOf: [
+          {
+            enum: [ undefined ],
+          },
+          {
+            type: 'array',
+          },
+        ]
+      },
+    );
+
     assert.deepEqual(
       schema.nullable().optional().getJsonSchema(),
-      { type: 'array', 'x-optional': true, 'x-nullable': true },
+      {
+        anyOf: [
+          {
+            enum: [ null, undefined ],
+          },
+          {
+            type: 'array',
+          },
+        ]
+      },
     );
   });
 });
