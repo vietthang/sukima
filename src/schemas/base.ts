@@ -1,4 +1,4 @@
-import { JsonSchema } from '../jsonSchema';
+import { JsonSchema, PropertyMap } from '../jsonSchema';
 
 export interface InternalJsonSchema extends JsonSchema {
 
@@ -18,17 +18,72 @@ function evictUndefined(value: any): any {
   }
 
   if (Array.isArray(value)) {
-    return value;
+    return value.map(evictUndefined);
   }
 
   return Object.keys(value)
-    .filter(key => value[key] !== undefined && key !== 'x-private')
+    .filter(key => value[key] !== undefined)
     .reduce((prevValue, key) => {
       return {
         ...prevValue,
         [key]: evictUndefined(value[key]),
       };
     }, {});
+}
+
+function resolveXNullable(schema: InternalJsonSchema): JsonSchema {
+  if (schema['x-nullable'] || schema['x-optional']) {
+    const values = [];
+    if (schema['x-nullable']) {
+      values.push(null);
+    }
+    if (schema['x-optional']) {
+      values.push(undefined);
+    }
+    return {
+      anyOf: [
+        {
+          enum: values,
+        },
+        resolveXNullable(
+          {
+            ...schema,
+            'x-nullable': undefined,
+            'x-optional': undefined,
+          },
+        ),
+      ]
+    };
+  }
+
+  if (!schema.properties) {
+    return schema;
+  }
+
+  const properties = schema.properties;
+
+  const newProperties = Object
+    .keys(properties)
+    .map((key) => {
+      return {
+        key,
+        value: resolveXNullable(properties[key]),
+      }
+    })
+    .reduce(
+      (prevValue, { key, value }) => {
+        return {
+          ...prevValue,
+          [key]: value,
+        };
+      },
+      {} as PropertyMap,
+    );
+
+  return {
+    ...schema,
+    properties: newProperties,
+  }
 }
 
 export class Schema<T> {
@@ -48,7 +103,7 @@ export class Schema<T> {
   }
 
   getJsonSchema() {
-    return evictUndefined(this.schema) as JsonSchema;
+    return evictUndefined(resolveXNullable(this.schema)) as JsonSchema;
   }
 
   id(id?: string) {
