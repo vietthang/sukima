@@ -86,10 +86,43 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
     ) as any as BaseObjectSchema<T & W, T & W>;
   }
 
+  addProperty<K extends string, V>(key: K, schema: Schema<V>):
+    BaseObjectSchema<T & { [property in K]: V }, T & { [property in K]: V }>;
+
+  addProperty<K extends string, V>(key: K, schema: PropertyDefinitions<V>):
+    BaseObjectSchema<T & { [property in K]: V }, T & { [property in K]: V }>;
+
+  addProperty(key: any, schema: any) {
+    return this.addProperties({ [key as string]: schema });
+  }
+
   additionalProperties(allow: boolean = true) {
     return this.extend(
       { additionalProperties: allow }
     );
+  }
+
+  pick<Key extends keyof T>(...keys: Key[]) {
+    const properties = this.schema.properties;
+
+    if (!properties) {
+      throw new Error('This schema does not contain any properties');
+    }
+
+    return this.extend({
+      properties: Object
+        .keys(properties)
+        .filter(key => keys.indexOf(key as any) !== -1)
+        .reduce(
+          (prevValue, key) => {
+            return {
+              ...prevValue,
+              [key]: properties[key],
+            }
+          },
+          {} as PropertyMap,
+        ),
+    }) as any as BaseObjectSchema<{ [property in Key]: T[Key] }, { [property in Key]: T[Key] }>;
   }
 
   nullable(): BaseObjectSchema<T, U | null> {
