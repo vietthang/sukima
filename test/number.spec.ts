@@ -8,96 +8,73 @@ const RANDOM_NUMBER_2 = Math.random();
 describe('Number schema test', () => {
   it('Should create simple number schema correctly', () => {
     const schema = new NumberSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number'});
+    assert.deepEqual(schema.schema, { __type: 'number'});
   });
 
   it('Should create simple integer schema correctly', () => {
     const schema = new NumberSchema('integer');
-    assert.deepEqual(schema.getJsonSchema(), { type: 'integer'});
+    assert.deepEqual(schema.schema, { __type: 'integer'});
   });
 
   it('Should set, overwrite & remove multipleOf correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
+    assert.deepEqual(schema.schema, { __type: 'number' });
     schema = schema.multipleOf(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', multipleOf: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.schema, { __type: 'number', multipleOf: RANDOM_NUMBER_1 });
     schema = schema.multipleOf(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', multipleOf: RANDOM_NUMBER_2 });
-    schema = schema.multipleOf();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
+    assert.deepEqual(schema.schema, { __type: 'number', multipleOf: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove maximum correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number'});
+    assert.deepEqual(schema.schema, { __type: 'number'});
     schema = schema.maximum(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', maximum: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.schema, { __type: 'number', maximum: RANDOM_NUMBER_1 });
     schema = schema.maximum(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', maximum: RANDOM_NUMBER_2 });
-    schema = schema.maximum();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
+    assert.deepEqual(schema.schema, { __type: 'number', maximum: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove minimum correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number'});
+    assert.deepEqual(schema.schema, { __type: 'number'});
     schema = schema.minimum(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', minimum: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.schema, { __type: 'number', minimum: RANDOM_NUMBER_1 });
     schema = schema.minimum(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number', minimum: RANDOM_NUMBER_2 });
-    schema = schema.minimum();
-    assert.deepEqual(schema.getJsonSchema(), { type: 'number' });
+    assert.deepEqual(schema.schema, { __type: 'number', minimum: RANDOM_NUMBER_2 });
   });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NumberSchema();
 
     assert.deepEqual(
-      schema.getJsonSchema(),
+      schema.schema,
       {
-        type: 'number',
+        __type: 'number',
       },
     );
 
     assert.deepEqual(
-      schema.nullable().getJsonSchema(),
+      schema.nullable().schema,
       {
-        anyOf: [
-          {
-            enum: [ null ],
-          },
-          {
-            type: 'number',
-          },
-        ]
+        __type: 'number',
+        'x-nullable': true,
       },
     );
 
     assert.deepEqual(
-      schema.optional().getJsonSchema(),
+      schema.optional().schema,
       {
-        anyOf: [
-          {
-            enum: [ undefined ],
-          },
-          {
-            type: 'number',
-          },
-        ]
+        __type: 'number',
+        'x-optional': true,
       },
     );
 
     assert.deepEqual(
-      schema.nullable().optional().getJsonSchema(),
+      schema.nullable().optional().schema,
       {
-        anyOf: [
-          {
-            enum: [ null, undefined ],
-          },
-          {
-            type: 'number',
-          },
-        ]
+        __type: 'number',
+        'x-nullable': true,
+        'x-optional': true,
       },
     );
   });

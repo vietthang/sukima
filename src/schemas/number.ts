@@ -6,15 +6,15 @@ export class BaseNumberSchema<T> extends Schema<T> {
     super(type);
   }
 
-  multipleOf(multipleOf?: number) {
+  multipleOf(multipleOf: number) {
     return this.extend({ multipleOf });
   }
 
-  maximum(maximum?: number) {
+  maximum(maximum: number) {
     return this.extend({ maximum });
   }
 
-  minimum(minimum?: number) {
+  minimum(minimum: number) {
     return this.extend({ minimum });
   }
 

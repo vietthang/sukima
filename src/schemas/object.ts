@@ -1,33 +1,32 @@
+import intersection = require('lodash/intersection')
+
 import { Schema, InternalJsonSchema } from './base';
 import { PropertyMap } from '../jsonSchema';
 
-function resolveSchemaHash<T>(definitions?: PropertyDefinitions<T>) {
-  if (!definitions) {
-    return {} as PropertyMap;
-  } else {
-    const schemaHash: PropertyMap = {};
-    const keys = Object.keys(definitions) as any as (keyof T)[];
-    keys.forEach((key) => {
-      const options = definitions[key];
+function resolveSchemaHash<T>(definitions: PropertyDefinitions<T>) {
+  const schemaHash: PropertyMap = {};
+  const keys = Object.keys(definitions) as any as (keyof T)[];
+  keys.forEach((key) => {
+    const options = definitions[key];
 
-      if (!options) {
-        return;
-      }
+    if (!options) {
+      return;
+    }
 
-      if (options instanceof Schema) {
-        schemaHash[key as string] = options.getJsonSchema();
-      } else {
-        const properties = resolveSchemaHash(options);
+    if (options instanceof Schema) {
+      schemaHash[key as string] = options.schema;
+    } else {
+      const properties = resolveSchemaHash(options);
 
-        schemaHash[key as string] = {
-          type: 'object',
-          properties: properties,
-          required: getRequiredProperties(properties),
-        };
-      }
-    });
-    return schemaHash;
-  }
+      schemaHash[key as string] = {
+        __type: 'object',
+        properties: properties,
+        required: getRequiredProperties(properties),
+      } as InternalJsonSchema;
+    }
+  });
+
+  return schemaHash;
 }
 
 function getRequiredProperties(properties: PropertyMap): string[] {
@@ -51,15 +50,15 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
     super('object');
   }
 
-  maxProperties(maxProperties?: number) {
+  maxProperties(maxProperties: number) {
     return this.extend({ maxProperties });
   }
 
-  minProperties(minProperties?: number) {
+  minProperties(minProperties: number) {
     return this.extend({ minProperties });
   }
 
-  properties<T2>(definitions?: PropertyDefinitions<T2>) {
+  properties<T2>(definitions: PropertyDefinitions<T2>) {
     const properties = resolveSchemaHash(definitions);
     const required = getRequiredProperties(properties);
 
@@ -109,9 +108,10 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
       throw new Error('This schema does not contain any properties');
     }
 
+    const propertyKeys = Object.keys(properties);
+
     return this.extend({
-      properties: Object
-        .keys(properties)
+      properties: propertyKeys
         .filter(key => keys.indexOf(key as any) !== -1)
         .reduce(
           (prevValue, key) => {
@@ -122,6 +122,7 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
           },
           {} as PropertyMap,
         ),
+      required: intersection(propertyKeys, this.schema.required || []),
     }) as any as BaseObjectSchema<{ [property in Key]: T[Key] }, { [property in Key]: T[Key] }>;
   }
 

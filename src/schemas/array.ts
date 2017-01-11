@@ -7,27 +7,27 @@ export class BaseArraySchema<T, U> extends Schema<T[] | U> {
     super('array');
   }
 
-  maxItems(maxItems?: number) {
+  maxItems(maxItems: number) {
     return this.extend({ maxItems });
   }
 
-  minItems(minItems?: number) {
+  minItems(minItems: number) {
     return this.extend({ minItems });
   }
 
-  uniqueItems(uniqueItems?: boolean) {
+  uniqueItems(uniqueItems: boolean) {
     return this.extend({ uniqueItems });
   }
 
-  items<T1>(items?: Schema<T1>): BaseArraySchema<T1, U>;
+  items<T1>(items: Schema<T1>): BaseArraySchema<T1, U>;
 
-  items<T1>(items?: PropertyDefinitions<T1>): BaseArraySchema<T1, U>;
+  items<T1>(items: PropertyDefinitions<T1>): BaseArraySchema<T1, U>;
 
   items(items: any) {
     if (items === undefined) {
       return this.extend({ items: undefined });
     } else if (items instanceof Schema) {
-      return this.extend({ items: items.getJsonSchema() });
+      return this.extend({ items: items.schema });
     } else if ('object' === typeof items) {
       return this.items(new ObjectSchema().properties(items));
     } else {

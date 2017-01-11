@@ -1,6 +1,9 @@
+import memoize = require('lodash/memoize');
+import cloneDeep = require('lodash/cloneDeep');
+import Ajv = require('ajv');
+
 import { Schema } from './schemas/base';
 import { JsonSchema } from './jsonSchema';
-import Ajv = require('ajv');
 
 export interface ValidateOptions {
   convert: boolean;
@@ -28,23 +31,41 @@ class UnknownError extends Error {
 
 }
 
+const getAjvInstance = memoize((convert: boolean) => {
+  const ajv = new Ajv({
+    useDefaults: true,
+    coerceTypes: convert ? 'array' : false,
+  });
+
+  ajv.addKeyword(
+    '__type',
+    {
+      macro(schema: any, parentSchema: any): any {
+        if (parentSchema['x-nullable']) {
+          return {
+            type: ['null', schema],
+          };
+        } else {
+          return {
+            type: schema,
+          };
+        }
+      }
+    }
+  )
+
+  return ajv;
+})
+
 export function validate<T>(schema: Schema<T>, value: any, options?: ValidateOptions): T;
 
 export function validate(schema: JsonSchema, value: any, options?: ValidateOptions): any;
 
 export function validate(schema: any, value: any, options: ValidateOptions = { convert: false }): any {
-  const ajv = new Ajv({
-    useDefaults: true,
-    coerceTypes: options.convert ? 'array' : false,
-  });
+  const ajv = getAjvInstance(options.convert);
 
-  let clonedValue: any;
-  if (typeof value === 'object' && value !== null) {
-    clonedValue = JSON.parse(JSON.stringify(value));
-  } else {
-    clonedValue = value;
-  }
-  const jsonSchema = schema instanceof Schema ? schema.getJsonSchema() : schema;
+  const clonedValue = cloneDeep(value);
+  const jsonSchema = schema instanceof Schema ? schema.schema : schema;
   const compiled = ajv.compile(jsonSchema);
   const result = compiled(clonedValue);
   if (!result) {
@@ -63,33 +84,10 @@ export function validateAsync<T>(schema: Schema<T>, value: any, options?: Valida
 export function validateAsync(schema: JsonSchema, value: any, options?: ValidateOptions): Promise<any>;
 
 export function validateAsync(schema: any, value: any, options: ValidateOptions = { convert: false }): Promise<any> {
-  const ajv = new Ajv({
-    useDefaults: true,
-    coerceTypes: options.convert ? 'array' : false,
-  });
+  const ajv = getAjvInstance(options.convert);
 
-  ajv.addKeyword('ajv-convert', {
-
-    validate(
-      schema: any,
-      data: any,
-      parentSchema?: Object,
-      dataPath?: string,
-      parentData?: Object | Array<any>,
-      parentDataProperty?: string | number,
-    ): boolean {
-      // schema.convert
-    }
-
-  })
-
-  let clonedValue: any;
-  if (typeof value === 'object' && value !== null) {
-    clonedValue = JSON.parse(JSON.stringify(value));
-  } else {
-    clonedValue = value;
-  }
-  const jsonSchema = schema instanceof Schema ? schema.getJsonSchema() : schema;
+  const clonedValue = cloneDeep(value);
+  const jsonSchema = schema instanceof Schema ? schema.schema : schema;
   const compiled = ajv.compile({
     ...jsonSchema,
     $async: true,

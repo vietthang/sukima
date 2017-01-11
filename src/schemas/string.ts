@@ -6,19 +6,19 @@ export class BaseStringSchema<T> extends Schema<T> {
     super('string');
   }
 
-  format(format?: string) {
+  format(format: string) {
     return this.extend({ format });
   }
 
-  maxLength(maxLength?: number) {
+  maxLength(maxLength: number) {
     return this.extend({ maxLength });
   }
 
-  minLength(minLength?: number) {
+  minLength(minLength: number) {
     return this.extend({ minLength });
   }
 
-  pattern(pattern?: string | RegExp) {
+  pattern(pattern: string | RegExp) {
     if (pattern instanceof RegExp) {
       return this.extend({ pattern: pattern.source });
     } else {

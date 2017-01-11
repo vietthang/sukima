@@ -1,9 +1,8 @@
+import { Schema } from './schemas/base';
 import { StringSchema } from './schemas/string';
 import { NumberSchema } from './schemas/number';
-import { BooleanSchema } from './schemas/boolean';
 import { ObjectSchema, Empty } from './schemas/object';
 import { ArraySchema } from './schemas/array';
-import { NullSchema } from './schemas/null';
 
 export function string() {
   return new StringSchema();
@@ -18,7 +17,7 @@ export function integer() {
 }
 
 export function boolean() {
-  return new BooleanSchema();
+  return new Schema('boolean');
 }
 
 export function object() {
@@ -30,11 +29,11 @@ export function array() {
 }
 
 export function nil() {
-  return new NullSchema();
+  return new Schema('null');
 }
 
 export { Schema } from './schemas/base';
 
 export { JsonSchema } from './jsonSchema';
 
-export { validate } from './validate';
+export { validate, validateAsync } from './validate';

@@ -1,6 +1,10 @@
-import { JsonSchema, PropertyMap } from '../jsonSchema';
+import { JsonSchema } from '../jsonSchema';
+
+export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
 
 export interface InternalJsonSchema extends JsonSchema {
+
+  __type?: SchemaType;
 
   'x-nullable'?: boolean;
 
@@ -8,92 +12,12 @@ export interface InternalJsonSchema extends JsonSchema {
 
 }
 
-function evictUndefined(value: any): any {
-  if (value === null) {
-    return null;
-  }
-
-  if ('object' !== typeof value) {
-    return value;
-  }
-
-  if (Array.isArray(value)) {
-    return value.map(evictUndefined);
-  }
-
-  return Object.keys(value)
-    .filter(key => value[key] !== undefined)
-    .reduce((prevValue, key) => {
-      return {
-        ...prevValue,
-        [key]: evictUndefined(value[key]),
-      };
-    }, {});
-}
-
-function resolveXNullable(schema: InternalJsonSchema): JsonSchema {
-  if (schema['x-nullable'] || schema['x-optional']) {
-    const values = [];
-    if (schema['x-nullable']) {
-      values.push(null);
-    }
-    if (schema['x-optional']) {
-      values.push(undefined);
-    }
-    return {
-      anyOf: [
-        {
-          enum: values,
-        },
-        resolveXNullable(
-          {
-            ...schema,
-            'x-nullable': undefined,
-            'x-optional': undefined,
-          },
-        ),
-      ]
-    };
-  }
-
-  if (!schema.properties) {
-    return schema;
-  }
-
-  const properties = schema.properties;
-
-  const newProperties = Object
-    .keys(properties)
-    .map((key) => {
-      return {
-        key,
-        value: resolveXNullable(properties[key]),
-      }
-    })
-    .reduce(
-      (prevValue, { key, value }) => {
-        return {
-          ...prevValue,
-          [key]: value,
-        };
-      },
-      {} as PropertyMap,
-    );
-
-  return {
-    ...schema,
-    properties: newProperties,
-  }
-}
-
 export class Schema<T> {
 
-  public value = {} as T;
+  public readonly schema: InternalJsonSchema;
 
-  protected schema: InternalJsonSchema;
-
-  public constructor(type?: string) {
-    this.schema = { type };
+  public constructor(type?: SchemaType) {
+    this.schema = { __type: type };
   }
 
   public extend(properties?: Partial<InternalJsonSchema>): this {
@@ -102,47 +26,43 @@ export class Schema<T> {
     return cloned;
   }
 
-  getJsonSchema() {
-    return evictUndefined(resolveXNullable(this.schema)) as JsonSchema;
-  }
-
-  id(id?: string) {
+  id(id: string) {
     return this.extend({ id });
   }
 
-  title(title?: string) {
+  title(title: string) {
     return this.extend({ title });
   }
 
-  description(description?: string) {
+  description(description: string) {
     return this.extend({ description });
   }
 
-  default(defaultValue?: T) {
+  default(defaultValue: T) {
     return this.extend({ default: defaultValue });
   }
 
-  exclusiveMaximum(exclusiveMaximum?: boolean) {
+  exclusiveMaximum(exclusiveMaximum: boolean) {
     return this.extend({ exclusiveMaximum });
   }
 
-  exclusiveMinimum(exclusiveMinimum?: boolean) {
+  exclusiveMinimum(exclusiveMinimum: boolean) {
     return this.extend({ exclusiveMinimum });
   }
 
-  enum(values?: T[]) {
+  enum(values: T[]) {
     return this.extend({ enum: values });
   }
 
-  not<U>(schema?: Schema<U>) {
-    return this.extend({ not: schema ? schema.getJsonSchema() : undefined });
+  not<U>(schema: Schema<U>) {
+    return this.extend({ not: schema ? schema.schema : undefined });
   }
 
   getPropertySchema<K extends keyof T>(key: K): Schema<T[K]> {
-    if (Array.isArray(this.schema.type)) {
+    if (Array.isArray(this.schema.__type)) {
       throw new Error('JSON schema with type is an array is not supported.');
     }
-    if (!this.schema.type) {
+    if (!this.schema.__type) {
       throw new Error('JSON schema does not contain type.');
     }
     if (!this.schema.properties) {
@@ -151,7 +71,7 @@ export class Schema<T> {
     if (!this.schema.properties[key]) {
       throw new Error(`JSON schema does not contain key ${key}`);
     }
-    return new Schema<T[K]>(this.schema.type).extend(this.schema.properties[key]);
+    return new Schema<T[K]>(this.schema.__type).extend(this.schema.properties[key]);
   }
 
   getPartialSchema(): Schema<Partial<T>> {
