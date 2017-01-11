@@ -41,7 +41,7 @@ export type PropertyDefinitions<T> = {
 };
 
 export interface Empty {
-  readonly __never?: never;
+
 }
 
 export class BaseObjectSchema<T, U> extends Schema<T | U> {
@@ -67,7 +67,7 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
         properties: properties,
         required: required,
       },
-    ) as any as BaseObjectSchema<T2, T2>;
+    ) as any as BaseObjectSchema<T2, U>;
   }
 
   addProperties<W>(definitions: PropertyDefinitions<W>) {
@@ -82,17 +82,11 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
         properties,
         required,
       },
-    ) as any as BaseObjectSchema<T & W, T & W>;
+    ) as any as BaseObjectSchema<T & W, U>;
   }
 
-  addProperty<K extends string, V>(key: K, schema: Schema<V>):
-    BaseObjectSchema<T & { [property in K]: V }, T & { [property in K]: V }>;
-
-  addProperty<K extends string, V>(key: K, schema: PropertyDefinitions<V>):
-    BaseObjectSchema<T & { [property in K]: V }, T & { [property in K]: V }>;
-
-  addProperty(key: any, schema: any) {
-    return this.addProperties({ [key as string]: schema });
+  addProperty<K extends string, V>(key: K, schema: Schema<V> | PropertyDefinitions<V>) {
+    return this.addProperties({ [key as string]: schema } as any as PropertyDefinitions<{ [P in K]: V }>);
   }
 
   additionalProperties(allow: boolean = true) {
@@ -136,4 +130,4 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
 
 }
 
-export class ObjectSchema<T> extends BaseObjectSchema<T, T> {};
+export class ObjectSchema<T> extends BaseObjectSchema<T, never> {};
