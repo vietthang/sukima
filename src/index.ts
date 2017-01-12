@@ -4,6 +4,10 @@ import { NumberSchema } from './schemas/number';
 import { ObjectSchema, Empty, PropertyDefinitions } from './schemas/object';
 import { ArraySchema } from './schemas/array';
 
+export function any() {
+  return new Schema<any>();
+}
+
 export function string() {
   return new StringSchema();
 }
