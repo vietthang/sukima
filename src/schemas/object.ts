@@ -89,6 +89,16 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
     return this.addProperties({ [key as string]: schema } as any as PropertyDefinitions<{ [P in K]: V }>);
   }
 
+  getPropertySchema<K extends keyof T>(key: K) {
+    const properties = this.schema.properties;
+
+    if (!properties) {
+      throw new Error('This schema does not contain any properties');
+    }
+
+    return new Schema<T[K]>().extend(properties[key]);
+  }
+
   additionalProperties(allow: boolean = true) {
     return this.extend(
       { additionalProperties: allow }
