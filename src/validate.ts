@@ -18,7 +18,7 @@ class ValidationError extends Error {
   constructor(source: any, errors: Ajv.ErrorObject[]) {
     super('Validation Error');
     this.source = source;
-    this.errors = errors;
+    this.errors = errors.filter(error => error.keyword !== '__type');
   }
 
 }
