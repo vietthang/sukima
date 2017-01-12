@@ -112,17 +112,17 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
       throw new Error('This schema does not contain any properties');
     }
 
-    const propertyKeys = Object.keys(properties);
+    const propertyKeys = Object.keys(properties)
+      .filter(key => keys.indexOf(key as any) !== -1);
 
     return this.extend({
       properties: propertyKeys
-        .filter(key => keys.indexOf(key as any) !== -1)
         .reduce(
           (prevValue, key) => {
             return {
               ...prevValue,
               [key]: properties[key],
-            }
+            };
           },
           {} as PropertyMap,
         ),

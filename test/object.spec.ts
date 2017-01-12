@@ -198,6 +198,47 @@ describe('Object schema test', () => {
     );
   });
 
+  it('Should work with getPropertySchema correctly', () => {
+    const schema = new ObjectSchema<Empty>().properties({
+      foo: string().default('abc'),
+      bar: number(),
+    });
+    const fooSchema = schema.getPropertySchema('foo');
+    assert.deepEqual(
+      fooSchema.schema,
+      {
+        __type: 'string',
+        default: 'abc',
+      }
+    );
+  });
+
+  it('Should work with pick correctly', () => {
+    const schema = new ObjectSchema<Empty>().properties({
+      foo: string().default('abc'),
+      bar: number().optional(),
+      barz: number(),
+    });
+    const pickedSchema = schema.pick('foo', 'bar');
+    assert.deepEqual(
+      pickedSchema.schema,
+      {
+        __type: 'object',
+        properties: {
+          foo: {
+            __type: 'string',
+            default: 'abc',
+          },
+          bar: {
+            __type: 'number',
+            'x-optional': true,
+          },
+        },
+        required: ['foo'],
+      }
+    )
+  });
+
   it('Should interact with nullable & optional correctly', () => {
     const schema = new ObjectSchema();
 
