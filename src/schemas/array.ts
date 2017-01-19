@@ -19,11 +19,11 @@ export class BaseArraySchema<T, U> extends Schema<T[] | U> {
     return this.extend({ uniqueItems });
   }
 
-  items<T1>(schema: Schema<T1> | PropertyDefinitions<T1>): BaseArraySchema<T1[], U> {
+  items<T1>(schema: Schema<T1> | PropertyDefinitions<T1>): BaseArraySchema<T1, U> {
     if (schema instanceof Schema) {
-      return this.extend({ items: schema }) as BaseArraySchema<T1[], U>;
+      return this.extend({ items: schema }) as BaseArraySchema<T1, U>;
     } else if ('object' === typeof schema) {
-      return this.items(new ObjectSchema().properties(schema)) as BaseArraySchema<T1[], U>;
+      return this.items(new ObjectSchema().properties(schema)) as BaseArraySchema<T1, U>;
     } else {
       throw new Error('Invalid type of items options.');
     }
