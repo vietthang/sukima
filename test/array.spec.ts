@@ -45,7 +45,7 @@ describe('Array schema test', () => {
     let schema = new ArraySchema();
     assert.deepEqual(schema.props, { type: 'array' });
     schema = schema.items(new StringSchema());
-    assert.deepEqual(schema.props, { type: 'array' , items: { type: 'string' } });
+    assert.deepEqual(schema.props, { type: 'array' , items: { props: { type: 'string' } } });
     schema = schema.items({
       stringKey: new StringSchema(),
       objectKey: {
@@ -57,24 +57,26 @@ describe('Array schema test', () => {
       {
         type: 'array',
         items: {
-          type: 'object',
-          properties: {
-            stringKey: {
-              props: {
-                type: 'string',
+          props: {
+            type: 'object',
+            properties: {
+              stringKey: {
+                props: {
+                  type: 'string',
+                },
               },
-            },
-            objectKey: {
-              props: {
-                type: 'object',
-                properties: {
-                  numberKey: {
-                    props: {
-                      type: 'number',
+              objectKey: {
+                props: {
+                  type: 'object',
+                  properties: {
+                    numberKey: {
+                      props: {
+                        type: 'number',
+                      },
                     },
                   },
-                },
-              }
+                }
+              },
             },
           },
         },
