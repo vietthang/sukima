@@ -46,7 +46,9 @@ export function nil() {
 }
 
 export { Schema } from './schemas/base';
-
-export { JsonSchema } from './jsonSchema';
+export { StringSchema } from './schemas/string';
+export { NumberSchema } from './schemas/number';
+export { ObjectSchema } from './schemas/object';
+export { ArraySchema } from './schemas/array';
 
 export { validate, validateAsync } from './validate';

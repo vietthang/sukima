@@ -102,6 +102,7 @@ const toAjvSchema = memoize(
 
 export function validate<T>(schema: Schema<T>, value: any, options?: ValidateOptions): T;
 
+/** @internal */
 export function validate(schema: JsonSchema, value: any, options?: ValidateOptions): any;
 
 export function validate(schema: any, value: any, options: ValidateOptions = { convert: false }): any {
@@ -122,6 +123,7 @@ export function validate(schema: any, value: any, options: ValidateOptions = { c
 
 export function validateAsync<T>(schema: Schema<T>, value: any, options?: ValidateOptions): Promise<T>;
 
+/** @internal */
 export function validateAsync(schema: JsonSchema, value: any, options?: ValidateOptions): Promise<any>;
 
 export function validateAsync(schema: any, value: any, options: ValidateOptions = { convert: false }): Promise<any> {

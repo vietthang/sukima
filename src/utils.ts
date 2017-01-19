@@ -2,6 +2,7 @@ import mapValues = require('lodash/mapValues');
 import omitBy = require('lodash/omitBy');
 import isUndefined = require('lodash/isUndefined');
 
+/** @internal */
 export function evictUndefined(value: any): any {
   if (value === null) {
     return null;
@@ -21,6 +22,7 @@ export function evictUndefined(value: any): any {
   return value;
 }
 
+/** @internal */
 export function memoize<T, U>(cache: WeakMap<T, U> | undefined, functor: (arg: T) => U): (arg: T) => U {
   if (cache !== undefined) {
     return (arg: T): U => {

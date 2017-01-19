@@ -1,7 +1,9 @@
+/** @internal */
 export type PropertyMap = {
   [key: string]: JsonSchema;
 };
 
+/** @internal */
 export interface JsonSchema {
   /**
    * The "id" keyword (or "id", for short) is used to alter the resolution scope. When an id is encountered, an
