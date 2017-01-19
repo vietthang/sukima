@@ -59,6 +59,18 @@ export class BaseObjectSchema<T extends {}, U> extends Schema<T | U> {
     return properties[key as any] as Schema<T[K]>;
   }
 
+  getPartialSchema(): BaseObjectSchema<Partial<T>, U> {
+    const { properties } = this.props;
+
+    if (!properties) {
+      return this;
+    }
+
+    return this.extend({
+      properties: mapValues(properties, (schema: Schema<any>) => schema.optional())
+    }) as BaseObjectSchema<Partial<T>, U>;
+  }
+
   additionalProperties(allow: boolean = true) {
     return this.extend(
       { additionalProperties: allow }

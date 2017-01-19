@@ -118,26 +118,12 @@ export class Schema<T> {
     return this.extend({ not: schema });
   }
 
-  getPropertySchema<K extends keyof T>(key: K): Schema<T[K]> {
-    if (!this.props.properties) {
-      throw new Error('JSON schema does not contain properties.');
-    }
-    if (!this.props.properties[key]) {
-      throw new Error(`JSON schema does not contain key ${key}`);
-    }
-    return this.props.properties[key];
-  }
-
-  getPartialSchema(): Schema<Partial<T>> {
-    return this.extend({ required: undefined }) as Schema<Partial<T>>;
-  }
-
   nullable(): Schema<T | null> {
-    return this.extend({ nullable: true }) as Schema<T | null>;
+    return this.extend({ nullable: true });
   }
 
   optional(): Schema<T | undefined> {
-    return this.extend({ optional: true }) as Schema<T | undefined>;
+    return this.extend({ optional: true });
   }
 
 }
