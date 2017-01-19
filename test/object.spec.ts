@@ -1,7 +1,7 @@
 import 'mocha';
 import assert = require('assert');
 import { string, number } from '../src';
-import { ObjectSchema, Empty } from '../src/schemas/object';
+import { ObjectSchema } from '../src/schemas/object';
 
 const RANDOM_NUMBER_1 = Math.random();
 const RANDOM_NUMBER_2 = Math.random();
@@ -9,55 +9,58 @@ const RANDOM_NUMBER_2 = Math.random();
 describe('Object schema test', () => {
   it('Should create simple object schema correctly', () => {
     const schema = new ObjectSchema();
-    assert.deepEqual(schema.schema, { __type: 'object'});
+    assert.deepEqual(schema.props, { type: 'object'});
   });
 
   it('Should set, overwrite & remove minProperties correctly', () => {
     let schema = new ObjectSchema();
-    assert.deepEqual(schema.schema, { __type: 'object' });
+    assert.deepEqual(schema.props, { type: 'object' });
     assert.deepEqual(
-      schema.minProperties(RANDOM_NUMBER_1).schema,
-      { __type: 'object', minProperties: RANDOM_NUMBER_1 },
+      schema.minProperties(RANDOM_NUMBER_1).props,
+      { type: 'object', minProperties: RANDOM_NUMBER_1 },
     );
     assert.deepEqual(
-      schema.minProperties(RANDOM_NUMBER_2).schema,
-      { __type: 'object', minProperties: RANDOM_NUMBER_2 },
+      schema.minProperties(RANDOM_NUMBER_2).props,
+      { type: 'object', minProperties: RANDOM_NUMBER_2 },
     );
   });
 
   it('Should set, overwrite & remove maxProperties correctly', () => {
     let schema = new ObjectSchema();
-    assert.deepEqual(schema.schema, { __type: 'object' });
+    assert.deepEqual(schema.props, { type: 'object' });
     assert.deepEqual(
-      schema.maxProperties(RANDOM_NUMBER_1).schema,
-      { __type: 'object', maxProperties: RANDOM_NUMBER_1 },
+      schema.maxProperties(RANDOM_NUMBER_1).props,
+      { type: 'object', maxProperties: RANDOM_NUMBER_1 },
     );
     assert.deepEqual(
-      schema.maxProperties(RANDOM_NUMBER_2).schema,
-      { __type: 'object', maxProperties: RANDOM_NUMBER_2 },
+      schema.maxProperties(RANDOM_NUMBER_2).props,
+      { type: 'object', maxProperties: RANDOM_NUMBER_2 },
     );
   });
 
   it('Should set properties correctly', () => {
-    let schema = new ObjectSchema<Empty>();
-    assert.deepEqual(schema.schema, { __type: 'object' });
+    let schema = new ObjectSchema<{}>();
+    assert.deepEqual(schema.props, { type: 'object' });
     schema = schema.properties({
       foo: string(),
       bar: number(),
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
         },
-        required: ['foo', 'bar'],
       },
     );
     schema = schema.properties({
@@ -65,55 +68,62 @@ describe('Object schema test', () => {
       bar2: number(),
     })
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo2: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar2: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
         },
-        required: ['foo2', 'bar2'],
       },
     );
   });
 
   it('Should add property(s) correctly', () => {
-    let schema = new ObjectSchema<Empty>();
-    assert.deepEqual(schema.schema, { __type: 'object' });
+    let schema = new ObjectSchema<{}>();
+    assert.deepEqual(schema.props, { type: 'object' });
     schema = schema.properties({
       foo: string(),
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
         },
-        required: ['foo'],
       },
     );
 
     schema = schema.addProperty('bar', number());
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
         },
-        required: ['foo', 'bar'],
       },
     );
 
@@ -122,50 +132,60 @@ describe('Object schema test', () => {
       bar2: number(),
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
           foo2: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar2: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
         },
-        required: ['foo', 'bar', 'foo2', 'bar2'],
       },
     );
   });
 
   it('Should interact with optional property correctly', () => {
-    let schema = new ObjectSchema<Empty>();
-    assert.deepEqual(schema.schema, { __type: 'object' });
+    let schema = new ObjectSchema<{}>();
+    assert.deepEqual(schema.props, { type: 'object' });
 
     schema = schema.properties({
       foo: string().optional(),
       bar: number(),
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
-            'x-optional': true,
+            props: {
+              type: 'string',
+              optional: true,
+            },
           },
           bar: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
         },
-        required: ['bar'],
       },
     );
 
@@ -174,67 +194,77 @@ describe('Object schema test', () => {
       bar2: number().optional(),
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
-            'x-optional': true,
+            props: {
+              type: 'string',
+              optional: true,
+            },
           },
           bar: {
-            __type: 'number',
+            props: {
+              type: 'number',
+            },
           },
           foo2: {
-            __type: 'string',
+            props: {
+              type: 'string',
+            },
           },
           bar2: {
-            __type: 'number',
-            'x-optional': true,
+            props: {
+              type: 'number',
+              optional: true,
+            },
           },
         },
-        required: ['bar', 'foo2'],
       },
     );
   });
 
   it('Should work with getPropertySchema correctly', () => {
-    const schema = new ObjectSchema<Empty>().properties({
+    const schema = new ObjectSchema<{}>().properties({
       foo: string().default('abc'),
       bar: number(),
     });
     const fooSchema = schema.getPropertySchema('foo');
     assert.deepEqual(
-      fooSchema.schema,
+      fooSchema.props,
       {
-        __type: 'string',
+        type: 'string',
         default: 'abc',
       }
     );
   });
 
   it('Should work with pick correctly', () => {
-    const schema = new ObjectSchema<Empty>().properties({
+    const schema = new ObjectSchema<{}>().properties({
       foo: string().default('abc'),
       bar: number().optional(),
       barz: number(),
     });
     const pickedSchema = schema.pick('foo', 'bar');
     assert.deepEqual(
-      pickedSchema.schema,
+      pickedSchema.props,
       {
-        __type: 'object',
+        type: 'object',
         properties: {
           foo: {
-            __type: 'string',
-            default: 'abc',
+            props: {
+              type: 'string',
+              default: 'abc',
+            },
           },
           bar: {
-            __type: 'number',
-            'x-optional': true,
+            props: {
+              type: 'number',
+              optional: true,
+            },
           },
         },
-        required: ['foo'],
       }
     )
   });
@@ -243,34 +273,34 @@ describe('Object schema test', () => {
     const schema = new ObjectSchema();
 
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'object',
+        type: 'object',
       },
     );
 
     assert.deepEqual(
-      schema.nullable().schema,
+      schema.nullable().props,
       {
-        __type: 'object',
-        'x-nullable': true,
+        type: 'object',
+        'nullable': true,
       },
     );
 
     assert.deepEqual(
-      schema.optional().schema,
+      schema.optional().props,
       {
-        __type: 'object',
-        'x-optional': true,
+        type: 'object',
+        'optional': true,
       },
     );
 
     assert.deepEqual(
-      schema.nullable().optional().schema,
+      schema.nullable().optional().props,
       {
-        __type: 'object',
-        'x-nullable': true,
-        'x-optional': true,
+        type: 'object',
+        'nullable': true,
+        'optional': true,
       },
     );
   });

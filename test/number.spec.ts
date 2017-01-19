@@ -8,73 +8,73 @@ const RANDOM_NUMBER_2 = Math.random();
 describe('Number schema test', () => {
   it('Should create simple number schema correctly', () => {
     const schema = new NumberSchema();
-    assert.deepEqual(schema.schema, { __type: 'number'});
+    assert.deepEqual(schema.props, { type: 'number'});
   });
 
   it('Should create simple integer schema correctly', () => {
     const schema = new NumberSchema('integer');
-    assert.deepEqual(schema.schema, { __type: 'integer'});
+    assert.deepEqual(schema.props, { type: 'integer'});
   });
 
   it('Should set, overwrite & remove multipleOf correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.schema, { __type: 'number' });
+    assert.deepEqual(schema.props, { type: 'number' });
     schema = schema.multipleOf(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'number', multipleOf: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'number', multipleOf: RANDOM_NUMBER_1 });
     schema = schema.multipleOf(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'number', multipleOf: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'number', multipleOf: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove maximum correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.schema, { __type: 'number'});
+    assert.deepEqual(schema.props, { type: 'number'});
     schema = schema.maximum(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'number', maximum: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'number', maximum: RANDOM_NUMBER_1 });
     schema = schema.maximum(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'number', maximum: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'number', maximum: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove minimum correctly', () => {
     let schema = new NumberSchema();
-    assert.deepEqual(schema.schema, { __type: 'number'});
+    assert.deepEqual(schema.props, { type: 'number'});
     schema = schema.minimum(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'number', minimum: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'number', minimum: RANDOM_NUMBER_1 });
     schema = schema.minimum(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'number', minimum: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'number', minimum: RANDOM_NUMBER_2 });
   });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NumberSchema();
 
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'number',
+        type: 'number',
       },
     );
 
     assert.deepEqual(
-      schema.nullable().schema,
+      schema.nullable().props,
       {
-        __type: 'number',
-        'x-nullable': true,
+        type: 'number',
+        'nullable': true,
       },
     );
 
     assert.deepEqual(
-      schema.optional().schema,
+      schema.optional().props,
       {
-        __type: 'number',
-        'x-optional': true,
+        type: 'number',
+        'optional': true,
       },
     );
 
     assert.deepEqual(
-      schema.nullable().optional().schema,
+      schema.nullable().optional().props,
       {
-        __type: 'number',
-        'x-nullable': true,
-        'x-optional': true,
+        type: 'number',
+        'nullable': true,
+        'optional': true,
       },
     );
   });

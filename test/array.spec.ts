@@ -11,41 +11,41 @@ const RANDOM_NUMBER_2 = Math.random();
 describe('Array schema test', () => {
   it('Should create simple string schema correctly', () => {
     const schema = new ArraySchema();
-    assert.deepEqual(schema.schema, { __type: 'array' });
+    assert.deepEqual(schema.props, { type: 'array' });
   });
 
   it('Should set, overwrite & remove maxItems correctly', () => {
     let schema = new ArraySchema();
-    assert.deepEqual(schema.schema, { __type: 'array' });
+    assert.deepEqual(schema.props, { type: 'array' });
     schema = schema.maxItems(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'array', maxItems: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'array', maxItems: RANDOM_NUMBER_1 });
     schema = schema.maxItems(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'array', maxItems: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'array', maxItems: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove minItems correctly', () => {
     let schema = new ArraySchema();
-    assert.deepEqual(schema.schema, { __type: 'array' });
+    assert.deepEqual(schema.props, { type: 'array' });
     schema = schema.minItems(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'array', minItems: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'array', minItems: RANDOM_NUMBER_1 });
     schema = schema.minItems(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'array', minItems: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'array', minItems: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove uniqueItems correctly', () => {
     let schema = new ArraySchema();
-    assert.deepEqual(schema.schema, { __type: 'array' });
+    assert.deepEqual(schema.props, { type: 'array' });
     schema = schema.uniqueItems(false);
-    assert.deepEqual(schema.schema, { __type: 'array' , uniqueItems: false });
+    assert.deepEqual(schema.props, { type: 'array' , uniqueItems: false });
     schema = schema.uniqueItems(true);
-    assert.deepEqual(schema.schema, { __type: 'array' , uniqueItems: true });
+    assert.deepEqual(schema.props, { type: 'array' , uniqueItems: true });
   });
 
   it('Should set, overwrite & remove items correctly', () => {
     let schema = new ArraySchema();
-    assert.deepEqual(schema.schema, { __type: 'array' });
+    assert.deepEqual(schema.props, { type: 'array' });
     schema = schema.items(new StringSchema());
-    assert.deepEqual(schema.schema, { __type: 'array' , items: { __type: 'string' } });
+    assert.deepEqual(schema.props, { type: 'array' , items: { type: 'string' } });
     schema = schema.items({
       stringKey: new StringSchema(),
       objectKey: {
@@ -53,26 +53,30 @@ describe('Array schema test', () => {
       },
     });
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'array',
+        type: 'array',
         items: {
-          __type: 'object',
+          type: 'object',
           properties: {
             stringKey: {
-              __type: 'string',
+              props: {
+                type: 'string',
+              },
             },
             objectKey: {
-              __type: 'object',
-              properties: {
-                numberKey: {
-                  __type: 'number',
+              props: {
+                type: 'object',
+                properties: {
+                  numberKey: {
+                    props: {
+                      type: 'number',
+                    },
+                  },
                 },
-              },
-              required: [ 'numberKey' ],
+              }
             },
           },
-          required: [ 'stringKey', 'objectKey' ],
         },
       },
     );
@@ -82,34 +86,34 @@ describe('Array schema test', () => {
     const schema = new ArraySchema();
 
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'array',
+        type: 'array',
       },
     );
 
     assert.deepEqual(
-      schema.nullable().schema,
+      schema.nullable().props,
       {
-        __type: 'array',
-        'x-nullable': true,
+        type: 'array',
+        'nullable': true,
       },
     );
 
     assert.deepEqual(
-      schema.optional().schema,
+      schema.optional().props,
       {
-        __type: 'array',
-        'x-optional': true,
+        type: 'array',
+        'optional': true,
       },
     );
 
     assert.deepEqual(
-      schema.nullable().optional().schema,
+      schema.nullable().optional().props,
       {
-        __type: 'array',
-        'x-nullable': true,
-        'x-optional': true,
+        type: 'array',
+        'nullable': true,
+        'optional': true,
       },
     );
   });

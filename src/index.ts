@@ -1,7 +1,7 @@
 import { Schema } from './schemas/base';
 import { StringSchema } from './schemas/string';
 import { NumberSchema } from './schemas/number';
-import { ObjectSchema, Empty, PropertyDefinitions } from './schemas/object';
+import { ObjectSchema, PropertyDefinitions } from './schemas/object';
 import { ArraySchema } from './schemas/array';
 
 export function any() {
@@ -24,7 +24,7 @@ export function boolean() {
   return new Schema('boolean');
 }
 
-export function object(): ObjectSchema<Empty>;
+export function object(): ObjectSchema<{}>;
 
 export function object<T>(definitions: PropertyDefinitions<T>): ObjectSchema<T>;
 

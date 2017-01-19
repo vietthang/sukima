@@ -20,3 +20,19 @@ export function evictUndefined(value: any): any {
 
   return value;
 }
+
+export function memoize<T, U>(cache: WeakMap<T, U> | undefined, functor: (arg: T) => U): (arg: T) => U {
+  if (cache !== undefined) {
+    return (arg: T): U => {
+      if (cache.has(arg)) {
+        return cache.get(arg) as U;
+      }
+
+      const result = functor(arg);
+      cache.set(arg, result);
+      return result;
+    };
+  } else {
+    return functor;
+  }
+}

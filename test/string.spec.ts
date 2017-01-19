@@ -10,77 +10,77 @@ const RANDOM_NUMBER_2 = Math.random();
 describe('String schema test', () => {
   it('Should create simple string schema correctly', () => {
     const schema = new StringSchema();
-    assert.deepEqual(schema.schema, { __type: 'string'});
+    assert.deepEqual(schema.props, { type: 'string'});
   });
 
   it('Should set, overwrite & remove format correctly', () => {
     let schema = new StringSchema();
-    assert.deepEqual(schema.schema, { __type: 'string' });
+    assert.deepEqual(schema.props, { type: 'string' });
     schema = schema.format(RANDOM_STRING_1);
-    assert.deepEqual(schema.schema, { __type: 'string', format: RANDOM_STRING_1 });
+    assert.deepEqual(schema.props, { type: 'string', format: RANDOM_STRING_1 });
     schema = schema.format(RANDOM_STRING_2);
-    assert.deepEqual(schema.schema, { __type: 'string', format: RANDOM_STRING_2 });
+    assert.deepEqual(schema.props, { type: 'string', format: RANDOM_STRING_2 });
   });
 
   it('Should set, overwrite & remove maxLength correctly', () => {
     let schema = new StringSchema();
-    assert.deepEqual(schema.schema, { __type: 'string' });
+    assert.deepEqual(schema.props, { type: 'string' });
     schema = schema.maxLength(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'string', maxLength: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'string', maxLength: RANDOM_NUMBER_1 });
     schema = schema.maxLength(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'string', maxLength: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'string', maxLength: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove minLength correctly', () => {
     let schema = new StringSchema();
-    assert.deepEqual(schema.schema, { __type: 'string' });
+    assert.deepEqual(schema.props, { type: 'string' });
     schema = schema.minLength(RANDOM_NUMBER_1);
-    assert.deepEqual(schema.schema, { __type: 'string' , minLength: RANDOM_NUMBER_1 });
+    assert.deepEqual(schema.props, { type: 'string' , minLength: RANDOM_NUMBER_1 });
     schema = schema.minLength(RANDOM_NUMBER_2);
-    assert.deepEqual(schema.schema, { __type: 'string' , minLength: RANDOM_NUMBER_2 });
+    assert.deepEqual(schema.props, { type: 'string' , minLength: RANDOM_NUMBER_2 });
   });
 
   it('Should set, overwrite & remove pattern correctly', () => {
     let schema = new StringSchema();
-    assert.deepEqual(schema.schema, { __type: 'string' });
+    assert.deepEqual(schema.props, { type: 'string' });
     schema = schema.pattern(RANDOM_STRING_1);
-    assert.deepEqual(schema.schema, { __type: 'string' , pattern: RANDOM_STRING_1 });
+    assert.deepEqual(schema.props, { type: 'string' , pattern: RANDOM_STRING_1 });
     schema = schema.pattern(new RegExp(RANDOM_STRING_2));
-    assert.deepEqual(schema.schema, { __type: 'string' , pattern: RANDOM_STRING_2 });
+    assert.deepEqual(schema.props, { type: 'string' , pattern: RANDOM_STRING_2 });
   });
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new StringSchema();
 
     assert.deepEqual(
-      schema.schema,
+      schema.props,
       {
-        __type: 'string',
+        type: 'string',
       },
     );
 
     assert.deepEqual(
-      schema.nullable().schema,
+      schema.nullable().props,
       {
-        __type: 'string',
-        'x-nullable': true,
+        type: 'string',
+        'nullable': true,
       },
     );
 
     assert.deepEqual(
-      schema.optional().schema,
+      schema.optional().props,
       {
-        __type: 'string',
-        'x-optional': true,
+        type: 'string',
+        'optional': true,
       },
     );
 
     assert.deepEqual(
-      schema.nullable().optional().schema,
+      schema.nullable().optional().props,
       {
-        __type: 'string',
-        'x-nullable': true,
-        'x-optional': true,
+        type: 'string',
+        'nullable': true,
+        'optional': true,
       },
     );
   });

@@ -16,7 +16,7 @@
     "stripInternal": true,
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
-    "lib": ["es2015.promise", "es5"]
+    "lib": ["es6"]
   },
   "filesGlob": [
     "src/index.ts",

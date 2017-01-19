@@ -1,50 +1,22 @@
-import intersection = require('lodash/intersection')
+import mapValues = require('lodash/mapValues');
 
-import { Schema, InternalJsonSchema } from './base';
-import { PropertyMap } from '../jsonSchema';
+import { Schema, PropertyMap } from './base';
 
-function resolveSchemaHash<T>(definitions: PropertyDefinitions<T>) {
-  const schemaHash: PropertyMap = {};
-  const keys = Object.keys(definitions) as any as (keyof T)[];
-  keys.forEach((key) => {
-    const options = definitions[key];
-
-    if (!options) {
-      return;
-    }
-
-    if (options instanceof Schema) {
-      schemaHash[key as string] = options.schema;
+function resolveProperties<T>(definitions: PropertyDefinitions<T>): PropertyMap<T> {
+  return mapValues(definitions, (definition: Schema<any> | PropertyDefinitions<any>) => {
+    if (definition instanceof Schema) {
+      return definition;
     } else {
-      const properties = resolveSchemaHash(options);
-
-      schemaHash[key as string] = {
-        __type: 'object',
-        properties: properties,
-        required: getRequiredProperties(properties),
-      } as InternalJsonSchema;
+      return new BaseObjectSchema<any, any>().properties(definition);
     }
-  });
-
-  return schemaHash;
-}
-
-function getRequiredProperties(properties: PropertyMap): string[] {
-  return Object.keys(properties).filter((key) => {
-    const property: InternalJsonSchema = properties[key];
-    return !property['x-optional'];
-  });
+  }) as any as PropertyMap<T>;
 }
 
 export type PropertyDefinitions<T> = {
-  [property in keyof T]: Schema<T[property]> | PropertyDefinitions<T[property]> | undefined;
+  [property in keyof T]: Schema<T[property]> | PropertyDefinitions<T[property]>;
 };
 
-export interface Empty {
-
-}
-
-export class BaseObjectSchema<T, U> extends Schema<T | U> {
+export class BaseObjectSchema<T extends {}, U> extends Schema<T | U> {
 
   constructor() {
     super('object');
@@ -59,30 +31,18 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
   }
 
   properties<T2>(definitions: PropertyDefinitions<T2>) {
-    const properties = resolveSchemaHash(definitions);
-    const required = getRequiredProperties(properties);
-
     return this.extend(
       {
-        properties: properties,
-        required: required,
+        properties: resolveProperties(definitions) as any,
       },
     ) as any as BaseObjectSchema<T2, U>;
   }
 
   addProperties<W>(definitions: PropertyDefinitions<W>) {
-    const properties = {
-      ...this.schema.properties,
-      ...resolveSchemaHash(definitions),
-    };
-    const required = getRequiredProperties(properties);
-
-    return this.extend(
-      {
-        properties,
-        required,
-      },
-    ) as any as BaseObjectSchema<T & W, U>;
+    return this.properties({
+      ...this.props.properties as any,
+      ...definitions as any,
+    })
   }
 
   addProperty<K extends string, V>(key: K, schema: Schema<V> | PropertyDefinitions<V>) {
@@ -90,13 +50,13 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
   }
 
   getPropertySchema<K extends keyof T>(key: K) {
-    const properties = this.schema.properties;
+    const properties = this.props.properties;
 
     if (!properties) {
       throw new Error('This schema does not contain any properties');
     }
 
-    return new Schema<T[K]>().extend(properties[key]);
+    return properties[key as any] as Schema<T[K]>;
   }
 
   additionalProperties(allow: boolean = true) {
@@ -106,7 +66,7 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
   }
 
   pick<Key extends keyof T>(...keys: Key[]) {
-    const properties = this.schema.properties;
+    const properties = this.props.properties;
 
     if (!properties) {
       throw new Error('This schema does not contain any properties');
@@ -124,9 +84,8 @@ export class BaseObjectSchema<T, U> extends Schema<T | U> {
               [key]: properties[key],
             };
           },
-          {} as PropertyMap,
+          {} as PropertyMap<any>,
         ),
-      required: intersection(propertyKeys, this.schema.required || []),
     }) as any as BaseObjectSchema<{ [property in Key]: T[Key] }, { [property in Key]: T[Key] }>;
   }
 
