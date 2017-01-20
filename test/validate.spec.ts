@@ -1,6 +1,6 @@
 import 'mocha';
 import { assert } from 'chai';
-import { string } from '../src';
+import { string, integer, array } from '../src';
 import { validate } from '../src/validate';
 
 describe('Base schema test', () => {
@@ -26,5 +26,14 @@ describe('Base schema test', () => {
     assert.throw(() => validate(string().nullable(), {}));
     assert.throw(() => validate(string().nullable(), undefined));
     assert.throw(() => validate(string().nullable(), new Date()));
+  });
+
+  it('Should success when validate array schema', () => {
+    const schema = array().items({
+      foo: string(),
+      bar: integer(),
+    });
+
+    assert.doesNotThrow(() => validate(schema, [{ foo: 'string', bar: 1 }]));
   });
 });

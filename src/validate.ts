@@ -85,7 +85,7 @@ function getRequiredProperties<T>(schema: Schema<T>) {
 const toAjvSchema = memoize(
   (schema: any): any => {
     if (schema instanceof Schema) {
-      const { properties } = schema.props;
+      const { properties, items } = schema.props;
       return evictUndefined({
         ...schema.props,
         type: undefined,
@@ -96,6 +96,7 @@ const toAjvSchema = memoize(
         properties: properties ? mapValues(properties, (childSchema: Schema<any>) => {
           return toAjvSchema(childSchema);
         }) : undefined,
+        items: items ? toAjvSchema(items) : undefined,
       });
     } else {
       return schema;
