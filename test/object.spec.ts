@@ -39,7 +39,7 @@ describe('Object schema test', () => {
   });
 
   it('Should set properties correctly', () => {
-    let schema = new ObjectSchema<{}>();
+    let schema = new ObjectSchema<any>();
     assert.deepEqual(schema.props, { type: 'object' });
     schema = schema.properties({
       foo: string(),
@@ -88,7 +88,7 @@ describe('Object schema test', () => {
   });
 
   it('Should add property(s) correctly', () => {
-    let schema = new ObjectSchema<{}>();
+    let schema = new ObjectSchema<any>();
     assert.deepEqual(schema.props, { type: 'object' });
     schema = schema.properties({
       foo: string(),
@@ -162,7 +162,7 @@ describe('Object schema test', () => {
   });
 
   it('Should interact with optional property correctly', () => {
-    let schema = new ObjectSchema<{}>();
+    let schema = new ObjectSchema<any>();
     assert.deepEqual(schema.props, { type: 'object' });
 
     schema = schema.properties({
@@ -226,7 +226,7 @@ describe('Object schema test', () => {
   });
 
   it('Should work with getPropertySchema correctly', () => {
-    const schema = new ObjectSchema<{}>().properties({
+    const schema = new ObjectSchema<any>().properties({
       foo: string().default('abc'),
       bar: number(),
     });
@@ -241,7 +241,7 @@ describe('Object schema test', () => {
   });
 
   it('Should work with pick correctly', () => {
-    const schema = new ObjectSchema<{}>().properties({
+    const schema = new ObjectSchema<any>().properties({
       foo: string().default('abc'),
       bar: number().optional(),
       barz: number(),
@@ -266,7 +266,16 @@ describe('Object schema test', () => {
           },
         },
       }
-    )
+    );
+  });
+
+  it('Should get list key correctly', () => {
+    const schema = new ObjectSchema<any>().properties({
+      foo: string().default('abc'),
+      bar: number().optional(),
+      barz: number(),
+    });
+    assert.deepEqual(schema.keys(), ['foo', 'bar', 'barz']);
   });
 
   it('Should interact with nullable & optional correctly', () => {
