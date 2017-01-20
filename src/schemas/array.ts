@@ -3,6 +3,7 @@ import { ObjectSchema, PropertyDefinitions } from './object';
 
 export class BaseArraySchema<T, U> extends Schema<T[] | U> {
 
+  /** @internal */
   constructor() {
     super('array');
   }

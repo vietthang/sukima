@@ -2,6 +2,7 @@ import { Schema } from './base';
 
 export class BaseNumberSchema<T> extends Schema<T> {
 
+  /** @internal */
   constructor(type: 'number' | 'integer' = 'number') {
     super(type);
   }

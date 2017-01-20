@@ -2,6 +2,7 @@ import { Schema } from './base';
 
 export class BaseStringSchema<T> extends Schema<T> {
 
+  /** @internal */
   constructor() {
     super('string');
   }

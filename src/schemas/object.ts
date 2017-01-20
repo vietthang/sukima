@@ -18,6 +18,7 @@ export type PropertyDefinitions<T> = {
 
 export class BaseObjectSchema<T extends {}, U> extends Schema<T | U> {
 
+  /** @internal */
   constructor() {
     super('object');
   }

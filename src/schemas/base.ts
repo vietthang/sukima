@@ -1,9 +1,12 @@
+/** @internal */
 export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
 
+/** @internal */
 export type PropertyMap<T> = {
   [K in keyof T]: Schema<T[K]>;
 }
 
+/** @internal */
 export interface SchemaProps<T> {
 
   id?: string;
@@ -74,12 +77,15 @@ export interface SchemaProps<T> {
 
 export class Schema<T> {
 
+  /** @internal */
   public readonly props: SchemaProps<T>;
 
+  /** @internal */
   public constructor(type?: SchemaType) {
     this.props = { type: type };
   }
 
+  /** @internal */
   public extend(properties?: Partial<SchemaProps<T>>): this {
     const cloned = Object.create(this.constructor.prototype);
     cloned.props = { ...this.props, ...properties };
