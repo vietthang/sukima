@@ -21,7 +21,7 @@ export function integer() {
 }
 
 export function boolean() {
-  return new Schema('boolean');
+  return new Schema<boolean>('boolean');
 }
 
 export function object(): ObjectSchema<{}>;
@@ -42,7 +42,7 @@ export function array() {
 }
 
 export function nil() {
-  return new Schema('null');
+  return new Schema<null>('null');
 }
 
 export { Schema } from './schemas/base';
