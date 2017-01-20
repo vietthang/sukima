@@ -110,6 +110,16 @@ export class BaseObjectSchema<T extends {}, U> extends Schema<T | U> {
     return super.optional() as BaseObjectSchema<T, U | undefined>;
   }
 
+  keys(): (keyof T)[] {
+    const { properties } = this.props;
+
+    if (!properties) {
+      return [];
+    } else {
+      return Object.keys(properties) as (keyof T)[];
+    }
+  }
+
 }
 
 export class ObjectSchema<T> extends BaseObjectSchema<T, never> {};
