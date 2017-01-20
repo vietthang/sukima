@@ -32,10 +32,11 @@ class UnknownError extends Error {
 
 }
 
-const getAjvInstanceCache = WeakMap !== undefined ? new WeakMap<boolean, Ajv.Ajv>() : undefined;
+type AjvContainer = {
+  compile: (schema: Object) => Ajv.ValidateFunction;
+}
 
-const getAjvInstance = memoize(
-  getAjvInstanceCache,
+const getAjvInstance = memoize<boolean, AjvContainer>(
   (convert: boolean) => {
     const ajv = new Ajv({
       useDefaults: true,
@@ -59,26 +60,29 @@ const getAjvInstance = memoize(
       }
     );
 
-    return ajv;
+    return {
+      compile: memoize<any, Ajv.ValidateFunction>(
+        (schema: Object) => ajv.compile(schema),
+      ),
+    }
   },
 );
 
-function getRequiredProperties<T>(schema: Schema<T>): string[] {
+function getRequiredProperties<T>(schema: Schema<T>) {
   const properties = schema.props.properties;
   if (!properties) {
-    return [];
+    return undefined;
   }
 
-  return Object.keys(schema.props.properties).filter((key: keyof T) => {
+  const required = Object.keys(schema.props.properties).filter((key: keyof T) => {
     const property = properties[key];
     return !property.props.optional;
   });
+
+  return required.length ? required : undefined;
 }
 
-const toAjvSchemaCache = WeakMap !== undefined ? new WeakMap<any, any>() : undefined;
-
 const toAjvSchema = memoize(
-  toAjvSchemaCache,
   (schema: any): any => {
     if (schema instanceof Schema) {
       const { properties } = schema.props;
@@ -98,7 +102,6 @@ const toAjvSchema = memoize(
     }
   },
 );
-
 
 export function validate<T>(schema: Schema<T>, value: any, options?: ValidateOptions): T;
 
