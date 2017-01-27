@@ -1,9 +1,7 @@
-/** @internal */
 export type PropertyMap = {
   [key: string]: JsonSchema;
 };
 
-/** @internal */
 export interface JsonSchema {
   /**
    * The "id" keyword (or "id", for short) is used to alter the resolution scope. When an id is encountered, an
@@ -213,5 +211,7 @@ export interface JsonSchema {
    * this format attribute and instance SHOULD succeed.
    */
   format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string;
+
+  'x-nullable'?: boolean;
 
 }

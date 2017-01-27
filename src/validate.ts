@@ -68,31 +68,17 @@ const getAjvInstance = memoize<boolean, AjvContainer>(
   },
 );
 
-function getRequiredProperties<T>(schema: Schema<T>) {
-  const properties = schema.props.properties;
-  if (!properties) {
-    return undefined;
-  }
-
-  const required = Object.keys(schema.props.properties).filter((key: keyof T) => {
-    const property = properties[key];
-    return !property.props.optional;
-  });
-
-  return required.length ? required : undefined;
-}
-
 const toAjvSchema = memoize(
   (schema: any): any => {
     if (schema instanceof Schema) {
-      const { properties, items } = schema.props;
+      const jsonSchema = schema.toJsonSchema();
+      const { properties, items } = jsonSchema;
+
       return evictUndefined({
-        ...schema.props,
+        ...jsonSchema,
         type: undefined,
         __type: schema.props.type,
         nullable: undefined,
-        'x-nullable': schema.props.nullable,
-        required: getRequiredProperties(schema),
         properties: properties ? mapValues(properties, (childSchema: Schema<any>) => {
           return toAjvSchema(childSchema);
         }) : undefined,

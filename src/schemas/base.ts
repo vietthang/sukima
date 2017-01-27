@@ -1,3 +1,8 @@
+import mapValues = require('lodash/mapValues');
+
+import { evictUndefined } from '../utils';
+import { JsonSchema } from '../jsonSchema';
+
 /** @internal */
 export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
 
@@ -75,6 +80,20 @@ export interface SchemaProps<T> {
 
 }
 
+function getRequiredProperties<T>(props: SchemaProps<T>) {
+  const properties = props.properties;
+  if (!properties) {
+    return undefined;
+  }
+
+  const required = Object.keys(props.properties).filter((key: keyof T) => {
+    const property = properties[key];
+    return !property.props.optional;
+  });
+
+  return required.length ? required : undefined;
+}
+
 export class Schema<T> {
 
   /** @internal */
@@ -83,6 +102,22 @@ export class Schema<T> {
   /** @internal */
   public constructor(type?: SchemaType) {
     this.props = { type: type };
+  }
+
+  public toJsonSchema(): JsonSchema {
+    const { props } = this;
+    const { properties, items, nullable } = props;
+
+    return evictUndefined({
+      ...this.props,
+      nullable: undefined,
+      'x-nullable': nullable,
+      required: getRequiredProperties(props),
+      properties: properties ? mapValues(properties, (childSchema: Schema<any>) => {
+        return childSchema.toJsonSchema();
+      }) : undefined,
+      items: items ? items.toJsonSchema() : undefined,
+    });
   }
 
   /** @internal */
