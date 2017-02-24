@@ -99,7 +99,7 @@ export class BaseObjectSchema<T extends {}, U> extends Schema<T | U> {
           },
           {} as PropertyMap<any>,
         ),
-    }) as any as BaseObjectSchema<{ [property in Key]: T[Key] }, { [property in Key]: T[Key] }>;
+    }) as any as BaseObjectSchema<{ [property in Key]: T[property] }, { [property in Key]: T[property] }>;
   }
 
   nullable(): BaseObjectSchema<T, U | null> {
