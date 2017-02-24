@@ -16,7 +16,8 @@
     "stripInternal": true,
     "declaration": true,
     "suppressImplicitAnyIndexErrors": true,
-    "lib": ["es6"]
+    "lib": ["es6"],
+    "skipLibCheck": true
   },
   "filesGlob": [
     "src/index.ts",

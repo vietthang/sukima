@@ -29,30 +29,30 @@ interface SomeMap<K, V> {
   set(key: K, value?: V): this;
 }
 
-class Cache<K, V> implements SomeMap<K, V> {
+class Cache<V> implements SomeMap<any, V> {
 
-  private readonly weakMap = new WeakMap<K, V>();
+  private readonly weakMap = new WeakMap<any, V>();
 
-  private readonly map = new Map<K, V>();
+  private readonly map = new Map<any, V>();
 
-  delete(key: K) {
+  delete(key: any) {
     return this.getMapInstance(key).delete(key);
   }
 
-  get(key: K) {
+  get(key: any) {
     return this.getMapInstance(key).get(key);
   }
 
-  has(key: K) {
+  has(key: any) {
     return this.getMapInstance(key).has(key);
   }
 
-  set(key: K, value: V): this {
+  set(key: any, value: V): this {
     this.getMapInstance(key).set(key, value);
     return this;
   }
 
-  private getMapInstance(key: K): SomeMap<K, V> {
+  private getMapInstance(key: any): SomeMap<any, V> {
     switch (typeof key) {
       case 'number':
       case 'string':
@@ -69,9 +69,9 @@ class Cache<K, V> implements SomeMap<K, V> {
 
 }
 
-function makeCache<K, V>() {
+function makeCache<V>() {
   if (WeakMap !== undefined) {
-    return new Cache<K, V>();
+    return new Cache<V>();
   } else {
     return undefined;
   }
@@ -79,7 +79,7 @@ function makeCache<K, V>() {
 
 /** @internal */
 export function memoize<T, U>(functor: (arg: T) => U): (arg: T) => U {
-  const cache = makeCache<T, U>();
+  const cache = makeCache<U>();
 
   if (cache !== undefined) {
     return (arg: T): U => {
