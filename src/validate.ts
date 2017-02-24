@@ -4,7 +4,7 @@ import Ajv = require('ajv');
 
 import { Schema } from './schemas/base';
 import { JsonSchema } from './jsonSchema';
-import { evictUndefined, memoize } from './utils';
+import { memoize } from './utils';
 
 export interface ValidateOptions {
   convert: boolean;
@@ -68,37 +68,36 @@ const getAjvInstance = memoize<boolean, AjvContainer>(
   },
 );
 
-const toAjvSchema = memoize(
-  (schema: any): any => {
-    if (schema instanceof Schema) {
-      const jsonSchema = schema.toJsonSchema();
-      const { properties, items } = jsonSchema;
+const convertSchemaToJsonSchema = memoize(
+  (schema: Schema<any>): JsonSchema => schema.toJsonSchema(),
+)
 
-      return evictUndefined({
-        ...jsonSchema,
-        type: undefined,
-        __type: schema.props.type,
-        nullable: undefined,
-        properties: properties ? mapValues(properties, (childSchema: Schema<any>) => {
-          return toAjvSchema(childSchema);
-        }) : undefined,
-        items: items ? toAjvSchema(items) : undefined,
-      });
-    } else {
-      return schema;
-    }
+const convertJsonSchemaToAjvSchema = memoize(
+  (jsonSchema: JsonSchema): any => {
+    const { properties, items, type, ...copied } = jsonSchema;
+
+    return {
+      ...copied,
+      __type: type,
+      properties: properties ? mapValues(properties, (childSchema: JsonSchema) => {
+        return convertJsonSchemaToAjvSchema(childSchema);
+      }) : undefined,
+      items: items ? convertJsonSchemaToAjvSchema(items) : undefined,
+    };
   },
 );
 
-export function validate<T>(schema: Schema<T>, value: any, options?: ValidateOptions): T;
-
-/** @internal */
-export function validate(schema: JsonSchema, value: any, options?: ValidateOptions): any;
-
-export function validate(schema: any, value: any, options: ValidateOptions = { convert: false }): any {
+export function validate<T>(
+  schema: Schema<T> | JsonSchema,
+  value: any,
+  options: ValidateOptions = { convert: false },
+): T {
+  if (schema instanceof Schema) {
+    return validate<T>(convertSchemaToJsonSchema(schema), value, options);
+  }
   const ajv = getAjvInstance(options.convert);
   const clonedValue = cloneDeep(value);
-  const compiled = ajv.compile(toAjvSchema(schema));
+  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(schema));
   const result = compiled(clonedValue);
   if (!result) {
     if (compiled.errors) {
@@ -111,29 +110,28 @@ export function validate(schema: any, value: any, options: ValidateOptions = { c
   }
 }
 
-export function validateAsync<T>(schema: Schema<T>, value: any, options?: ValidateOptions): Promise<T>;
-
-/** @internal */
-export function validateAsync(schema: JsonSchema, value: any, options?: ValidateOptions): Promise<any>;
-
-export function validateAsync(schema: any, value: any, options: ValidateOptions = { convert: false }): Promise<any> {
+export async function validateAsync<T>(
+  schema: Schema<T> | JsonSchema,
+  value: any,
+  options: ValidateOptions = { convert: false },
+): Promise<T> {
+  if (schema instanceof Schema) {
+    return validateAsync<T>(convertSchemaToJsonSchema(schema), value, options);
+  }
   const ajv = getAjvInstance(options.convert);
   const clonedValue = cloneDeep(value);
   const compiled = ajv.compile({
-    ...toAjvSchema(schema),
+    ...convertJsonSchemaToAjvSchema(schema),
     $async: true,
   });
-  try {
-    const result = compiled(clonedValue);
-    if (!result) {
+  const result = await compiled(clonedValue);
+  if (!result) {
+    if (compiled.errors) {
+      throw new ValidationError(clonedValue, compiled.errors)
+    } else {
       throw new UnknownError();
     }
+  } else {
     return clonedValue;
-  } catch (error) {
-    if (error.ajv) {
-      throw new ValidationError(clonedValue, error.errors);
-    } else {
-      throw error;
-    }
   }
 }
