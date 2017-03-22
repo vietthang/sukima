@@ -6,34 +6,37 @@
   "scripts": {
     "compile": "tsc",
     "bundle": "dts-bundle --name sukima --main build/src/index.d.ts",
-    "test": "NODE_ENV=test mocha --recursive --compilers ts:ts-node/register --bail",
-    "cover": "NODE_ENV=test nyc npm test",
+    "unit": "NODE_ENV=test mocha --recursive --compilers ts:ts-node/register --bail",
+    "cover": "NODE_ENV=test nyc npm run unit",
     "build": "npm run compile && npm run bundle",
     "clean": "rm -rf build",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run clean && npm run build",
+    "lint": "tslint --project tsconfig.json",
+    "lint:fix": "tslint --fix --project tsconfig.json",
+    "test": "npm run lint && npm run cover"
   },
   "homepage": "https://github.com/vietthang/sukima",
   "author": "Yoshi",
   "license": "MIT",
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/lodash": "^4.14.48",
-    "@types/mocha": "^2.2.32",
-    "@types/node": "0.0.3",
+    "@types/chai": "^3.4.35",
+    "@types/mocha": "^2.2.40",
+    "@types/node": "7.0.8",
+    "@types/ramda": "types/npm-ramda",
     "chai": "^3.5.0",
-    "dts-bundle": "^0.6.1",
+    "dts-bundle": "^0.7.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.1.2",
+    "mocha": "^3.2.0",
     "nyc": "^10.1.2",
-    "source-map-support": "^0.4.10",
-    "ts-node": "^2.0.0",
-    "tslint": "^3.15.1",
-    "tslint-microsoft-contrib": "^2.0.13",
+    "source-map-support": "^0.4.14",
+    "ts-node": "^3.0.2",
+    "tslint": "^4.5.1",
+    "tslint-config-standard": "^4.0.0",
     "typescript": "^2.2.1"
   },
   "dependencies": {
-    "ajv": "^4.10.3",
-    "lodash": "^4.17.4"
+    "ajv": "^4.11.5",
+    "ramda": "^0.23.0"
   },
   "typings": "build/src/sukima.d.ts",
   "nyc": {

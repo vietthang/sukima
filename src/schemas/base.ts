@@ -1,7 +1,7 @@
-import mapValues = require('lodash/mapValues');
+import { mapObjIndexed } from 'ramda'
 
-import { evictUndefined } from '../utils';
-import { JsonSchema } from '../jsonSchema';
+import { evictUndefined } from '../utils'
+import { JsonSchema } from '../jsonSchema'
 
 /** @internal */
 export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
@@ -14,157 +14,157 @@ export type PropertyMap<T> = {
 /** @internal */
 export interface SchemaProps<T> {
 
-  id?: string;
+  id?: string
 
-  title?: string;
+  title?: string
 
-  description?: string;
+  description?: string
 
-  'default'?: T;
+  'default'?: T
 
-  multipleOf?: number;
+  multipleOf?: number
 
-  maximum?: number;
+  maximum?: number
 
-  exclusiveMaximum?: boolean;
+  exclusiveMaximum?: boolean
 
-  minimum?: number;
+  minimum?: number
 
-  exclusiveMinimum?: boolean;
+  exclusiveMinimum?: boolean
 
-  maxLength?: number;
+  maxLength?: number
 
-  minLength?: number;
+  minLength?: number
 
-  pattern?: string;
+  pattern?: string
 
-  additionalItems?: boolean;
+  additionalItems?: boolean
 
-  items?: Schema<any>;
+  items?: Schema<any>
 
-  maxItems?: number;
+  maxItems?: number
 
-  minItems?: number;
+  minItems?: number
 
-  uniqueItems?: boolean;
+  uniqueItems?: boolean
 
-  maxProperties?: number;
+  maxProperties?: number
 
-  minProperties?: number;
+  minProperties?: number
 
-  required?: string[];
+  required?: string[]
 
-  additionalProperties?: boolean;
+  additionalProperties?: boolean
 
-  properties?: PropertyMap<T>;
+  properties?: PropertyMap<T>
 
-  enum?: T[];
+  enum?: T[]
 
-  type?: SchemaType;
+  type?: SchemaType
 
-  allOf?: Schema<any>[];
+  allOf?: Schema<any>[]
 
-  anyOf?: Schema<any>[];
+  anyOf?: Schema<any>[]
 
-  oneOf?: Schema<any>[];
+  oneOf?: Schema<any>[]
 
-  not?: Schema<any>;
+  not?: Schema<any>
 
-  format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string;
+  format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string
 
-  nullable?: boolean;
+  nullable?: boolean
 
-  optional?: boolean;
+  optional?: boolean
 
-  convert?: (input: any) => T;
+  convert?: (input: any) => T
 
 }
 
-function getRequiredProperties<T>(props: SchemaProps<T>) {
-  const properties = props.properties;
+function getRequiredProperties<T> (props: SchemaProps<T>) {
+  const properties = props.properties
   if (!properties) {
-    return undefined;
+    return undefined
   }
 
   const required = Object.keys(props.properties).filter((key: keyof T) => {
-    const property = properties[key];
-    return !property.props.optional;
-  });
+    const property = properties[key]
+    return !property.props.optional
+  })
 
-  return required.length ? required : undefined;
+  return required.length ? required : undefined
 }
 
 export class Schema<T> {
 
   /** @internal */
-  public readonly props: SchemaProps<T>;
+  public readonly props: SchemaProps<T>
 
   /** @internal */
-  public constructor(type?: SchemaType) {
-    this.props = { type: type };
+  public constructor (type?: SchemaType) {
+    this.props = { type: type }
   }
 
-  public toJsonSchema(): JsonSchema {
-    const { props } = this;
-    const { properties, items, nullable } = props;
+  public toJsonSchema (): JsonSchema {
+    const { props } = this
+    const { properties, items, nullable } = props
 
     return evictUndefined({
       ...this.props,
       nullable: undefined,
       'x-nullable': nullable,
       required: getRequiredProperties(props),
-      properties: properties ? mapValues(properties, (childSchema: Schema<any>) => {
-        return childSchema.toJsonSchema();
-      }) : undefined,
+      properties: properties ? mapObjIndexed((childSchema: Schema<any>) => {
+        return childSchema.toJsonSchema()
+      }, properties) : undefined,
       items: items ? items.toJsonSchema() : undefined,
-    });
+    })
   }
 
   /** @internal */
-  public extend(properties?: Partial<SchemaProps<T>>): this {
-    const cloned = Object.create(this.constructor.prototype);
-    cloned.props = { ...this.props, ...properties };
-    return cloned;
+  public extend (properties?: Partial<SchemaProps<T>>): this {
+    const cloned = Object.create(this.constructor.prototype)
+    cloned.props = { ...this.props, ...properties }
+    return cloned
   }
 
-  id(id: string) {
-    return this.extend({ id });
+  id (id: string) {
+    return this.extend({ id })
   }
 
-  title(title: string) {
-    return this.extend({ title });
+  title (title: string) {
+    return this.extend({ title })
   }
 
-  description(description: string) {
-    return this.extend({ description });
+  description (description: string) {
+    return this.extend({ description })
   }
 
-  default(defaultValue: T) {
-    return this.extend({ default: defaultValue });
+  default (defaultValue: T) {
+    return this.extend({ default: defaultValue })
   }
 
-  exclusiveMaximum(exclusiveMaximum: boolean) {
-    return this.extend({ exclusiveMaximum });
+  exclusiveMaximum (exclusiveMaximum: boolean) {
+    return this.extend({ exclusiveMaximum })
   }
 
-  exclusiveMinimum(exclusiveMinimum: boolean) {
-    return this.extend({ exclusiveMinimum });
+  exclusiveMinimum (exclusiveMinimum: boolean) {
+    return this.extend({ exclusiveMinimum })
   }
 
-  enum(values: T[]) {
-    return this.extend({ enum: values });
+  enum (values: T[]) {
+    return this.extend({ enum: values })
   }
 
-  not<U>(schema: Schema<U>) {
-    return this.extend({ not: schema });
+  not<U> (schema: Schema<U>) {
+    return this.extend({ not: schema })
   }
 
-  nullable(): Schema<T | null> {
-    return this.extend({ nullable: true });
+  nullable (): Schema<T | null> {
+    return this.extend({ nullable: true })
   }
 
-  optional(): Schema<T | undefined> {
-    return this.extend({ optional: true });
+  optional (): Schema<T | undefined> {
+    return this.extend({ optional: true })
   }
 
 }
