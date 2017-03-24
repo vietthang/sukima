@@ -1,32 +1,32 @@
-import { Schema } from './schemas/base'
+import { BaseSchema } from './schemas/base'
 import { StringSchema } from './schemas/string'
 import { NumberSchema } from './schemas/number'
 import { ObjectSchema, PropertyDefinitions } from './schemas/object'
 import { ArraySchema } from './schemas/array'
 
 export function any () {
-  return new Schema<any>()
+  return new BaseSchema<any, never, any>()
 }
 
 export function string () {
-  return new StringSchema()
+  return new StringSchema<never, string>()
 }
 
 export function number () {
-  return new NumberSchema()
+  return new NumberSchema<never, number>()
 }
 
 export function integer () {
-  return new NumberSchema('integer')
+  return new NumberSchema<never, number>('integer')
 }
 
 export function boolean () {
-  return new Schema<boolean>('boolean')
+  return new BaseSchema<boolean, never, boolean>('boolean')
 }
 
-export function object (): ObjectSchema<{}>
+export function object (): ObjectSchema<object, never, object>
 
-export function object<T extends object> (definitions: PropertyDefinitions<T>): ObjectSchema<T>
+export function object<T extends object> (definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T>
 
 export function object (properties?: any): any {
   const schema = new ObjectSchema()
@@ -38,17 +38,17 @@ export function object (properties?: any): any {
 }
 
 export function array () {
-  return new ArraySchema()
+  return new ArraySchema<any, never, any[]>()
 }
 
 export function nil () {
-  return new Schema<null>('null')
+  return new BaseSchema<null, never, null>('null')
 }
 
-export { Schema } from './schemas/base';
+export { BaseSchema } from './schemas/base';
 export { StringSchema } from './schemas/string';
 export { NumberSchema } from './schemas/number';
 export { ObjectSchema } from './schemas/object';
 export { ArraySchema } from './schemas/array';
 
-export { validate, validateAsync } from './validate';
+export { validate } from './validate';

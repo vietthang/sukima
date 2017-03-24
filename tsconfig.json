@@ -18,9 +18,5 @@
     "suppressImplicitAnyIndexErrors": true,
     "lib": ["es6"]
   },
-  "include": [
-    "src/index.ts",
-    "test/**/*.spec.ts"
-  ],
   "compileOnSave": false
 }

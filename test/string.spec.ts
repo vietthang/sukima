@@ -1,5 +1,5 @@
 import 'mocha'
-import assert = require('assert')
+import { assert } from 'chai'
 import { StringSchema } from '../src/schemas/string'
 
 const RANDOM_STRING_1 = Math.random().toLocaleString()
@@ -60,26 +60,9 @@ describe('String schema test', () => {
     )
 
     assert.deepEqual(
-      schema.nullable().props,
-      {
-        type: 'string',
-        'nullable': true,
-      },
-    )
-
-    assert.deepEqual(
       schema.optional().props,
       {
         type: 'string',
-        'optional': true,
-      },
-    )
-
-    assert.deepEqual(
-      schema.nullable().optional().props,
-      {
-        type: 'string',
-        'nullable': true,
         'optional': true,
       },
     )

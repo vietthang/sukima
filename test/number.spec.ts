@@ -1,5 +1,5 @@
 import 'mocha'
-import assert = require('assert')
+import { assert } from 'chai'
 import { NumberSchema } from '../src/schemas/number'
 
 const RANDOM_NUMBER_1 = Math.random()
@@ -43,6 +43,24 @@ describe('Number schema test', () => {
     assert.deepEqual(schema.props, { type: 'number', minimum: RANDOM_NUMBER_2 })
   })
 
+  it('Should set, overwrite & remove exclusiveMaximum correctly', () => {
+    let schema = new NumberSchema()
+    assert.deepEqual(schema.props, { type: 'number'})
+    schema = schema.exclusiveMaximum(false)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: false })
+    schema = schema.exclusiveMaximum(true)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: true })
+  })
+
+  it('Should set, overwrite & remove exclusiveMinimum correctly', () => {
+    let schema = new NumberSchema()
+    assert.deepEqual(schema.props, { type: 'number'})
+    schema = schema.exclusiveMinimum(false)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: false })
+    schema = schema.exclusiveMinimum(true)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: true })
+  })
+
   it('Should interact with nullable & optional correctly', () => {
     const schema = new NumberSchema()
 
@@ -54,26 +72,9 @@ describe('Number schema test', () => {
     )
 
     assert.deepEqual(
-      schema.nullable().props,
-      {
-        type: 'number',
-        'nullable': true,
-      },
-    )
-
-    assert.deepEqual(
       schema.optional().props,
       {
         type: 'number',
-        'optional': true,
-      },
-    )
-
-    assert.deepEqual(
-      schema.nullable().optional().props,
-      {
-        type: 'number',
-        'nullable': true,
         'optional': true,
       },
     )

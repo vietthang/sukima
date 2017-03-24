@@ -1,6 +1,6 @@
-import { Schema } from './base'
+import { BaseSchema } from './base'
 
-export class BaseStringSchema<T> extends Schema<T> {
+export class StringSchema<U, V> extends BaseSchema<string, U, V> {
 
   /** @internal */
   constructor () {
@@ -27,14 +27,4 @@ export class BaseStringSchema<T> extends Schema<T> {
     }
   }
 
-  nullable (): BaseStringSchema<T | null> {
-    return super.nullable() as BaseStringSchema<T | null>
-  }
-
-  optional (): BaseStringSchema<T | undefined> {
-    return super.optional() as BaseStringSchema<T | undefined>
-  }
-
 }
-
-export class StringSchema extends BaseStringSchema<string> {}

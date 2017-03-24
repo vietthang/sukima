@@ -1,6 +1,8 @@
 import 'mocha'
 import 'source-map-support/register'
-import assert = require('assert')
+import { assert } from 'chai'
+import { equals } from 'ramda'
+
 import { ArraySchema } from '../src/schemas/array'
 import { StringSchema } from '../src/schemas/string'
 import { NumberSchema } from '../src/schemas/number'
@@ -45,33 +47,35 @@ describe('Array schema test', () => {
     let schema = new ArraySchema()
     assert.deepEqual(schema.props, { type: 'array' })
     schema = schema.items(new StringSchema())
-    assert.deepEqual(schema.props, { type: 'array' , items: { props: { type: 'string' } } })
+    assert(equals<any>(schema.props, { type: 'array' , items: { props: { type: 'string' } } }))
     schema = schema.items({
       stringKey: new StringSchema(),
       objectKey: {
         numberKey: new NumberSchema(),
       },
     })
-    assert.deepEqual(
-      schema.props,
-      {
-        type: 'array',
-        items: {
-          props: {
-            type: 'object',
-            properties: {
-              stringKey: {
-                props: {
-                  type: 'string',
+    assert(
+      equals<any>(
+        schema.props,
+        {
+          type: 'array',
+          items: {
+            props: {
+              type: 'object',
+              properties: {
+                stringKey: {
+                  props: {
+                    type: 'string',
+                  },
                 },
-              },
-              objectKey: {
-                props: {
-                  type: 'object',
-                  properties: {
-                    numberKey: {
-                      props: {
-                        type: 'number',
+                objectKey: {
+                  props: {
+                    type: 'object',
+                    properties: {
+                      numberKey: {
+                        props: {
+                          type: 'number',
+                        },
                       },
                     },
                   },
@@ -80,11 +84,11 @@ describe('Array schema test', () => {
             },
           },
         },
-      },
+      ),
     )
   })
 
-  it('Should interact with nullable & optional correctly', () => {
+  it('Should interact with optional correctly', () => {
     const schema = new ArraySchema()
 
     assert.deepEqual(
@@ -95,27 +99,10 @@ describe('Array schema test', () => {
     )
 
     assert.deepEqual(
-      schema.nullable().props,
-      {
-        type: 'array',
-        'nullable': true,
-      },
-    )
-
-    assert.deepEqual(
       schema.optional().props,
       {
         type: 'array',
-        'optional': true,
-      },
-    )
-
-    assert.deepEqual(
-      schema.nullable().optional().props,
-      {
-        type: 'array',
-        'nullable': true,
-        'optional': true,
+        optional: true,
       },
     )
   })

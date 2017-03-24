@@ -20,7 +20,7 @@ export interface SchemaProps<T> {
 
   description?: string
 
-  'default'?: T
+  'default'?: any
 
   multipleOf?: number
 
@@ -72,11 +72,7 @@ export interface SchemaProps<T> {
 
   format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string
 
-  nullable?: boolean
-
   optional?: boolean
-
-  convert?: (input: any) => T
 
 }
 
@@ -94,7 +90,21 @@ function getRequiredProperties<T> (props: SchemaProps<T>) {
   return required.length ? required : undefined
 }
 
-export class Schema<T> {
+export interface Schema<T> {
+
+  value: T
+
+  /** @internal */
+  readonly props: SchemaProps<any>
+
+  /** @internal */
+  toJsonSchema (): JsonSchema
+
+}
+
+export class BaseSchema<T, U, V> implements Schema<T | (U & V)> {
+
+  public readonly value: T | (U & V)
 
   /** @internal */
   public readonly props: SchemaProps<T>
@@ -104,26 +114,28 @@ export class Schema<T> {
     this.props = { type: type }
   }
 
+  /** @internal */
   public toJsonSchema (): JsonSchema {
     const { props } = this
-    const { properties, items, nullable } = props
+    const { properties, items, allOf, anyOf, oneOf } = props
 
     return evictUndefined({
       ...this.props,
-      nullable: undefined,
-      'x-nullable': nullable,
       required: getRequiredProperties(props),
       properties: properties ? mapObjIndexed((childSchema: Schema<any>) => {
         return childSchema.toJsonSchema()
       }, properties) : undefined,
       items: items ? items.toJsonSchema() : undefined,
+      allOf: allOf ? allOf.map(schema => schema.toJsonSchema()) : undefined,
+      anyOf: anyOf ? anyOf.map(schema => schema.toJsonSchema()) : undefined,
+      oneOf: oneOf ? oneOf.map(schema => schema.toJsonSchema()) : undefined,
     })
   }
 
   /** @internal */
   public extend (properties?: Partial<SchemaProps<T>>): this {
     const cloned = Object.create(this.constructor.prototype)
-    cloned.props = { ...this.props, ...properties }
+    cloned.props = { ...this.props, ...properties as any }
     return cloned
   }
 
@@ -139,31 +151,19 @@ export class Schema<T> {
     return this.extend({ description })
   }
 
-  default (defaultValue: T) {
-    return this.extend({ default: defaultValue })
-  }
-
-  exclusiveMaximum (exclusiveMaximum: boolean) {
-    return this.extend({ exclusiveMaximum })
-  }
-
-  exclusiveMinimum (exclusiveMinimum: boolean) {
-    return this.extend({ exclusiveMinimum })
-  }
-
   enum (values: T[]) {
     return this.extend({ enum: values })
   }
 
-  not<U> (schema: Schema<U>) {
+  not (schema: Schema<any>) {
     return this.extend({ not: schema })
   }
 
-  nullable (): Schema<T | null> {
-    return this.extend({ nullable: true })
+  default<X> (defaultValue: X): BaseSchema<T, X, X> {
+    return this.extend({ default: defaultValue }) as BaseSchema<T, X, X>
   }
 
-  optional (): Schema<T | undefined> {
+  optional (): BaseSchema<T, U, U | undefined> {
     return this.extend({ optional: true })
   }
 

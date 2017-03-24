@@ -1,7 +1,7 @@
 import { mapObjIndexed, clone } from 'ramda'
 import Ajv = require('ajv')
 
-import { Schema } from './schemas/base'
+import { Schema, BaseSchema } from './schemas/base'
 import { JsonSchema } from './jsonSchema'
 import { memoize } from './utils'
 
@@ -9,7 +9,7 @@ export interface ValidateOptions {
   convert: boolean
 }
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
 
   public readonly errors: Ajv.ErrorObject[]
 
@@ -19,14 +19,6 @@ class ValidationError extends Error {
     super('Validation Error')
     this.source = source
     this.errors = errors.filter(error => error.keyword !== '__type')
-  }
-
-}
-
-class UnknownError extends Error {
-
-  constructor () {
-    super('Unknown Error')
   }
 
 }
@@ -86,12 +78,17 @@ const convertJsonSchemaToAjvSchema = memoize(
   },
 )
 
+export interface ValidateResult<T> {
+  value?: T
+  error?: ValidationError
+}
+
 export function validate<T> (
   schema: Schema<T> | JsonSchema,
   value: any,
   options: ValidateOptions = { convert: false },
-): T {
-  if (schema instanceof Schema) {
+): ValidateResult<T> {
+  if (schema instanceof BaseSchema) {
     return validate<T>(convertSchemaToJsonSchema(schema), value, options)
   }
   const ajv = getAjvInstance(options.convert)
@@ -99,38 +96,8 @@ export function validate<T> (
   const compiled = ajv.compile(convertJsonSchemaToAjvSchema(schema))
   const result = compiled(clonedValue)
   if (!result) {
-    if (compiled.errors) {
-      throw new ValidationError(clonedValue, compiled.errors)
-    } else {
-      throw new UnknownError()
-    }
+    return { error: new ValidationError(clonedValue, compiled.errors!) }
   } else {
-    return clonedValue
-  }
-}
-
-export async function validateAsync<T> (
-  schema: Schema<T> | JsonSchema,
-  value: any,
-  options: ValidateOptions = { convert: false },
-): Promise<T> {
-  if (schema instanceof Schema) {
-    return validateAsync<T>(convertSchemaToJsonSchema(schema), value, options)
-  }
-  const ajv = getAjvInstance(options.convert)
-  const clonedValue = clone(value)
-  const compiled = ajv.compile({
-    ...convertJsonSchemaToAjvSchema(schema),
-    $async: true,
-  })
-  const result = await compiled(clonedValue)
-  if (!result) {
-    if (compiled.errors) {
-      throw new ValidationError(clonedValue, compiled.errors)
-    } else {
-      throw new UnknownError()
-    }
-  } else {
-    return clonedValue
+    return { value: clonedValue }
   }
 }

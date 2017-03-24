@@ -1,13 +1,13 @@
 import { mapObjIndexed } from 'ramda'
 
-import { Schema, PropertyMap } from './base'
+import { Schema, BaseSchema, PropertyMap } from './base'
 
 function resolveProperties<T> (definitions: PropertyDefinitions<T>): PropertyMap<T> {
   return mapObjIndexed((definition: Schema<any> | PropertyDefinitions<any>) => {
-    if (definition instanceof Schema) {
+    if (definition instanceof BaseSchema) {
       return definition
     } else {
-      return new BaseObjectSchema<any, any>().properties(definition)
+      return new ObjectSchema<any, any, any>().properties(definition)
     }
   }, definitions)
 }
@@ -16,7 +16,7 @@ export type PropertyDefinitions<T> = {
   [property in keyof T]: Schema<T[property]> | PropertyDefinitions<T[property]>;
 }
 
-export class BaseObjectSchema<T extends object, U> extends Schema<T | U> {
+export class ObjectSchema<T extends object, U, V> extends BaseSchema<T, U, V> {
 
   /** @internal */
   constructor () {
@@ -36,14 +36,14 @@ export class BaseObjectSchema<T extends object, U> extends Schema<T | U> {
       {
         properties: resolveProperties(definitions) as any,
       },
-    ) as any as BaseObjectSchema<T2, U>
+    ) as any as ObjectSchema<T2, U, V>
   }
 
-  addProperties<W> (definitions: PropertyDefinitions<W>) {
+  addProperties<W> (definitions: PropertyDefinitions<W>): ObjectSchema<T & W, U, V> {
     return this.properties({
       ...this.props.properties as any,
       ...definitions as any,
-    })
+    }) as ObjectSchema<T & W, U, V>
   }
 
   addProperty<K extends string, V> (key: K, schema: Schema<V> | PropertyDefinitions<V>) {
@@ -54,18 +54,6 @@ export class BaseObjectSchema<T extends object, U> extends Schema<T | U> {
     const { properties = {} as PropertyMap<T | U> } = this.props
 
     return properties[key as any] as Schema<T[K]>
-  }
-
-  getPartialSchema (): BaseObjectSchema<Partial<T>, U> {
-    const { properties } = this.props
-
-    if (!properties) {
-      return this
-    }
-
-    return this.extend({
-      properties: mapObjIndexed((schema: Schema<any>) => schema.optional(), properties as any),
-    }) as BaseObjectSchema<Partial<T>, U>
   }
 
   additionalProperties (allow: boolean = true) {
@@ -91,15 +79,7 @@ export class BaseObjectSchema<T extends object, U> extends Schema<T | U> {
           },
           {} as PropertyMap<any>,
         ),
-    }) as any as BaseObjectSchema<{ [property in Key]: T[property] }, { [property in Key]: T[property] }>
-  }
-
-  nullable (): BaseObjectSchema<T, U | null> {
-    return super.nullable() as BaseObjectSchema<T, U | null>
-  }
-
-  optional (): BaseObjectSchema<T, U | undefined> {
-    return super.optional() as BaseObjectSchema<T, U | undefined>
+    }) as any as ObjectSchema<{ [property in Key]: T[property] }, U, V>
   }
 
   keys (): (keyof T)[] {
@@ -113,5 +93,3 @@ export class BaseObjectSchema<T extends object, U> extends Schema<T | U> {
   }
 
 }
-
-export class ObjectSchema<T extends object> extends BaseObjectSchema<T, never> {};
