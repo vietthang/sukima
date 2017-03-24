@@ -18,10 +18,9 @@
     "suppressImplicitAnyIndexErrors": true,
     "lib": ["es6"]
   },
-  "filesGlob": [
+  "include": [
     "src/index.ts",
-    "test/**/*.spec.ts",
-    "!./node_modules/**/*.ts"
+    "test/**/*.spec.ts"
   ],
   "compileOnSave": false
 }
