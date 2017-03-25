@@ -1,7 +1,7 @@
 import { mapObjIndexed, clone } from 'ramda'
 import Ajv = require('ajv')
 
-import { Schema, BaseSchema } from './schemas/base'
+import { Schema } from './schemas/base'
 import { JsonSchema } from './jsonSchema'
 import { memoize } from './utils'
 
