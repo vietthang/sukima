@@ -52,3 +52,5 @@ export { ObjectSchema } from './schemas/object';
 export { ArraySchema } from './schemas/array';
 
 export { validate } from './validate';
+
+export * from './operators'
