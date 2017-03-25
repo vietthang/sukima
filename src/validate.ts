@@ -84,16 +84,13 @@ export interface ValidateResult<T> {
 }
 
 export function validate<T> (
-  schema: Schema<T> | JsonSchema,
+  schema: Schema<T>,
   value: any,
   options: ValidateOptions = { convert: false },
 ): ValidateResult<T> {
-  if (schema instanceof BaseSchema) {
-    return validate<T>(convertSchemaToJsonSchema(schema), value, options)
-  }
   const ajv = getAjvInstance(options.convert)
   const clonedValue = clone(value)
-  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(schema))
+  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(convertSchemaToJsonSchema(schema)))
   const result = compiled(clonedValue)
   if (!result) {
     return { error: new ValidationError(clonedValue, compiled.errors!) }
