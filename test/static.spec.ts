@@ -34,6 +34,18 @@ const testCases = [
     name: 'testNullableString',
     expected: 'string | null',
   },
+  {
+    name: 'testNumber',
+    expected: 'number',
+  },
+  {
+    name: 'testNumberWithOptional',
+    expected: 'number | undefined',
+  },
+  {
+    name: 'testNullableNumber',
+    expected: 'number | null',
+  },
 ]
 
 function getIdentifiers (node: ts.Node): ts.Node[] {

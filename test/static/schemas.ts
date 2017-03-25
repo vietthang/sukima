@@ -1,6 +1,6 @@
 import { Schema } from '../../src/schemas/base'
 
-import { string } from '../../src'
+import { string, number } from '../../src'
 import { nullable } from '../../src/operators'
 
 function validateMock<T> (schema: Schema<T>): T {
@@ -18,3 +18,9 @@ export const testStringWithDefaultIsANumber = validateMock(string().default(1))
 export const testStringWithDefaultIsNull = validateMock(string().default(null))
 
 export const testNullableString = validateMock(nullable(string()))
+
+export const testNumber = validateMock(number())
+
+export const testNumberWithOptional = validateMock(number().optional())
+
+export const testNullableNumber = validateMock(nullable(number()))
