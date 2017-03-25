@@ -45,7 +45,7 @@ export function nil () {
   return new BaseSchema<null, never, null>('null')
 }
 
-export { BaseSchema } from './schemas/base';
+export { Schema, BaseSchema } from './schemas/base';
 export { StringSchema } from './schemas/string';
 export { NumberSchema } from './schemas/number';
 export { ObjectSchema } from './schemas/object';

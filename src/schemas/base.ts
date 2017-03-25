@@ -92,6 +92,7 @@ function getRequiredProperties<T> (props: SchemaProps<T>) {
 
 export interface Schema<T> {
 
+  /** @internal */
   value: T
 
   /** @internal */
@@ -104,6 +105,7 @@ export interface Schema<T> {
 
 export class BaseSchema<T, U, V> implements Schema<T | (U & V)> {
 
+  /** @internal */
   public readonly value: T | (U & V)
 
   /** @internal */

@@ -12,11 +12,14 @@
     "cover": "NODE_ENV=test nyc npm run unit",
     "cover:check": "nyc check-coverage --lines 100 --functions 100 --branches 100",
     "build": "npm run compile && npm run bundle",
-    "clean": "rm -rf build",
-    "prepublish": "npm run clean && npm run build",
+    "clean": "rm -rf build && rm -rf coverage && rm -rf .nyc_output",
+    "prepublish": "npm run clean && npm run build && npm test",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --fix --project tsconfig.json",
-    "test": "npm run lint && npm run cover"
+    "test": "npm run lint && npm run cover",
+    "publish:patch": "npm version patch && npm publish",
+    "publish:minor": "npm version minor && npm publish",
+    "publish:major": "npm version major && npm publish"
   },
   "homepage": "https://github.com/vietthang/sukima",
   "author": "Yoshi",

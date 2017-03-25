@@ -6,6 +6,8 @@
         "**/.hg": true,
         "**/.DS_Store": true,
         "build": true,
+        "coverage": true,
+        ".nyc_output": true,
         "node_modules": true
     }
 }
