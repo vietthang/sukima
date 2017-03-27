@@ -4,35 +4,35 @@ import { NumberSchema } from './schemas/number'
 import { ObjectSchema, PropertyDefinitions } from './schemas/object'
 import { ArraySchema } from './schemas/array'
 
-export function any () {
+export function any() {
   return new BaseSchema<any, never, any, never>()
 }
 
-export function string () {
+export function string() {
   return new StringSchema<never, string, never>()
 }
 
-export function number () {
+export function number() {
   return new NumberSchema<never, number, never>()
 }
 
-export function integer () {
+export function integer() {
   return new NumberSchema<never, number, never>('integer')
 }
 
-export function boolean () {
+export function boolean() {
   return new BaseSchema<boolean, never, boolean, never>('boolean')
 }
 
-export function object<T extends object> (definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
+export function object<T extends object>(definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
   return new ObjectSchema<T, never, T, never>(definitions)
 }
 
-export function array () {
+export function array() {
   return new ArraySchema<any, never, any[], never>()
 }
 
-export function nil () {
+export function nil() {
   return new BaseSchema<null, never, null, never>('null')
 }
 

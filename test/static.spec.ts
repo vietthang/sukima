@@ -40,7 +40,7 @@ const testCases = [
   },
 ]
 
-function getIdentifiers (node: ts.Node): ts.Node[] {
+function getIdentifiers(node: ts.Node): ts.Node[] {
   if (node.kind === ts.SyntaxKind.Identifier) {
     return [node]
   } else {

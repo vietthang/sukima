@@ -7,6 +7,10 @@
         "multiline": "always",
         "singleline": "never"
       }
+    ],
+    "space-before-function-paren": [
+      true,
+      "never"
     ]
   }
 }

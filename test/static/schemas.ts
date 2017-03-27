@@ -3,7 +3,7 @@ import { Schema } from '../../src/schemas/base'
 import { string, number } from '../../src'
 import { nullable } from '../../src/operators'
 
-function validateMock<T> (schema: Schema<T>): T {
+function validateMock<T>(schema: Schema<T>): T {
   return null as any as T
 }
 

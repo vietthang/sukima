@@ -15,7 +15,7 @@ export class ValidationError extends Error {
 
   public readonly source: any
 
-  constructor (source: any, errors: Ajv.ErrorObject[]) {
+  constructor(source: any, errors: Ajv.ErrorObject[]) {
     super('Validation Error')
     this.source = source
     this.errors = errors.filter(error => error.keyword !== '__type')
@@ -37,7 +37,7 @@ const getAjvInstance = memoize<boolean, AjvContainer>(
     ajv.addKeyword(
       '__type',
       {
-        macro (schema: any, parentSchema: any): any {
+        macro(schema: any, parentSchema: any): any {
           if (parentSchema['x-nullable']) {
             return {
               type: ['null', schema],
@@ -83,7 +83,7 @@ export interface ValidateResult<T> {
   error?: ValidationError
 }
 
-export function validate<T> (
+export function validate<T>(
   schema: Schema<T>,
   value: any,
   options: ValidateOptions = { convert: false },

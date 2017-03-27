@@ -8,7 +8,7 @@ import { ObjectSchema } from '../src/schemas/object'
 const RANDOM_NUMBER_1 = Math.random()
 const RANDOM_NUMBER_2 = Math.random()
 
-function assertDeepEqual (lhs: any, rhs: any) {
+function assertDeepEqual(lhs: any, rhs: any) {
   return assert(equals<any>(lhs, rhs))
 }
 

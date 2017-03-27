@@ -82,7 +82,7 @@ export interface SchemaProps<T> {
 
 }
 
-function getRequiredProperties<T> (props: SchemaProps<T>) {
+function getRequiredProperties<T>(props: SchemaProps<T>) {
   const properties = props.properties
   if (!properties) {
     return undefined
@@ -104,7 +104,7 @@ export interface Schema<T> {
   readonly props: SchemaProps<any>
 
   /** @internal */
-  toJsonSchema (): JsonSchema
+  toJsonSchema(): JsonSchema
 
 }
 
@@ -116,12 +116,12 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
   public readonly props: SchemaProps<T>
 
   /** @internal */
-  public constructor (type?: SchemaType, props: SchemaProps<T> = {}) {
+  public constructor(type?: SchemaType, props: SchemaProps<T> = {}) {
     this.props = { ...props, type: type }
   }
 
   /** @internal */
-  public toJsonSchema (): JsonSchema {
+  public toJsonSchema(): JsonSchema {
     const { props } = this
     const { properties, items, allOf, anyOf, oneOf } = props
 
@@ -139,37 +139,37 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
   }
 
   /** @internal */
-  public extend (properties?: Partial<SchemaProps<T>>): this {
+  public extend(properties?: Partial<SchemaProps<T>>): this {
     const cloned = Object.create(this.constructor.prototype)
     cloned.props = { ...this.props, ...properties as any }
     return cloned
   }
 
-  id (id: string) {
+  id(id: string) {
     return this.extend({ id })
   }
 
-  title (title: string) {
+  title(title: string) {
     return this.extend({ title })
   }
 
-  description (description: string) {
+  description(description: string) {
     return this.extend({ description })
   }
 
-  enum (values: T[]) {
+  enum(values: T[]) {
     return this.extend({ enum: values })
   }
 
-  not (schema: Schema<any>) {
+  not(schema: Schema<any>) {
     return this.extend({ not: schema })
   }
 
-  meta (key: string, value: any): this;
+  meta(key: string, value: any): this;
 
-  meta (key: string): any;
+  meta(key: string): any;
 
-  meta (key: string, value?: any): any {
+  meta(key: string, value?: any): any {
     if (value !== undefined) {
       return this.extend({
         meta: {
@@ -182,15 +182,15 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
     }
   }
 
-  default (defaultValue: T): BaseSchema<T, T, T, W> {
+  default(defaultValue: T): BaseSchema<T, T, T, W> {
     return this.extend({ default: defaultValue }) as BaseSchema<T, T, T, W>
   }
 
-  nullable (): BaseSchema<T, U, V, null> {
+  nullable(): BaseSchema<T, U, V, null> {
     return this.extend({ nullable: true }) as BaseSchema<T, U, V, null>
   }
 
-  optional (): BaseSchema<T, U, U | undefined, W> {
+  optional(): BaseSchema<T, U, U | undefined, W> {
     return this.extend({ optional: true })
   }
 
