@@ -23,14 +23,6 @@ const testCases = [
     expected: 'string',
   },
   {
-    name: 'testStringWithDefaultIsANumber',
-    expected: 'string | number',
-  },
-  {
-    name: 'testStringWithDefaultIsNull',
-    expected: 'string | null',
-  },
-  {
     name: 'testNullableString',
     expected: 'string | null',
   },

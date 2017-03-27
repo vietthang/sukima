@@ -5,44 +5,35 @@ import { ObjectSchema, PropertyDefinitions } from './schemas/object'
 import { ArraySchema } from './schemas/array'
 
 export function any () {
-  return new BaseSchema<any, never, any>()
+  return new BaseSchema<any, never, any, never>()
 }
 
 export function string () {
-  return new StringSchema<never, string>()
+  return new StringSchema<never, string, never>()
 }
 
 export function number () {
-  return new NumberSchema<never, number>()
+  return new NumberSchema<never, number, never>()
 }
 
 export function integer () {
-  return new NumberSchema<never, number>('integer')
+  return new NumberSchema<never, number, never>('integer')
 }
 
 export function boolean () {
-  return new BaseSchema<boolean, never, boolean>('boolean')
+  return new BaseSchema<boolean, never, boolean, never>('boolean')
 }
 
-export function object (): ObjectSchema<object, never, object>
-
-export function object<T extends object> (definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T>
-
-export function object (properties?: any): any {
-  const schema = new ObjectSchema()
-  if (properties) {
-    return schema.properties(properties)
-  } else {
-    return schema
-  }
+export function object<T extends object> (definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
+  return new ObjectSchema<T, never, T, never>(definitions)
 }
 
 export function array () {
-  return new ArraySchema<any, never, any[]>()
+  return new ArraySchema<any, never, any[], never>()
 }
 
 export function nil () {
-  return new BaseSchema<null, never, null>('null')
+  return new BaseSchema<null, never, null, never>('null')
 }
 
 export { Schema, BaseSchema } from './schemas/base';

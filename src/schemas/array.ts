@@ -1,7 +1,7 @@
 import { Schema, BaseSchema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
-export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
+export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
 
   /** @internal */
   constructor () {
@@ -20,12 +20,24 @@ export class ArraySchema<T, U, V> extends BaseSchema<T[], U, V> {
     return this.extend({ uniqueItems })
   }
 
-  items<T1> (schema: Schema<T1> | PropertyDefinitions<T1>): ArraySchema<T1, U, V> {
+  items<T1> (schema: Schema<T1> | PropertyDefinitions<T1>): ArraySchema<T1, U, V, W> {
     if (schema instanceof BaseSchema) {
-      return this.extend({ items: schema }) as any as ArraySchema<T1, U, V>
+      return this.extend({ items: schema }) as any as ArraySchema<T1, U, V, W>
     } else {
-      return this.items(new ObjectSchema().properties(schema)) as any as ArraySchema<T1, U, V>
+      return this.items(new ObjectSchema(schema)) as any as ArraySchema<T1, U, V, W>
     }
+  }
+
+  default (defaultValue: T[]): ArraySchema<T, T[], T[], W> {
+    return this.extend({ default: defaultValue }) as ArraySchema<T, T[], T[], W>
+  }
+
+  nullable (): ArraySchema<T, U, V, null> {
+    return this.extend({ nullable: true }) as ArraySchema<T, U, V, null>
+  }
+
+  optional (): ArraySchema<T, U, U | undefined, W> {
+    return this.extend({ optional: true })
   }
 
 }

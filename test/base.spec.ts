@@ -3,7 +3,7 @@ import { assert } from 'chai'
 
 import { BaseSchema, SchemaType } from '../src/schemas/base'
 
-class SchemaImpl extends BaseSchema<any, never, any> {
+class SchemaImpl extends BaseSchema<any, never, any, never> {
 
   public constructor (type: SchemaType) {
     super(type)

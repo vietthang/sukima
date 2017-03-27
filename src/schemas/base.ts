@@ -74,6 +74,12 @@ export interface SchemaProps<T> {
 
   optional?: boolean
 
+  nullable?: boolean
+
+  meta?: {
+    [key: string]: string,
+  }
+
 }
 
 function getRequiredProperties<T> (props: SchemaProps<T>) {
@@ -102,16 +108,16 @@ export interface Schema<T> {
 
 }
 
-export class BaseSchema<T, U, V> implements Schema<T | (U & V)> {
+export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
 
-  public readonly _: T | (U & V)
+  public readonly _: T | (U & V) | W
 
   /** @internal */
   public readonly props: SchemaProps<T>
 
   /** @internal */
-  public constructor (type?: SchemaType) {
-    this.props = { type: type }
+  public constructor (type?: SchemaType, props: SchemaProps<T> = {}) {
+    this.props = { ...props, type: type }
   }
 
   /** @internal */
@@ -159,11 +165,15 @@ export class BaseSchema<T, U, V> implements Schema<T | (U & V)> {
     return this.extend({ not: schema })
   }
 
-  default<X> (defaultValue: X): BaseSchema<T, X, X> {
-    return this.extend({ default: defaultValue }) as BaseSchema<T, X, X>
+  default (defaultValue: T): BaseSchema<T, T, T, W> {
+    return this.extend({ default: defaultValue }) as BaseSchema<T, T, T, W>
   }
 
-  optional (): BaseSchema<T, U, U | undefined> {
+  nullable (): BaseSchema<T, U, V, null> {
+    return this.extend({ nullable: true }) as BaseSchema<T, U, V, null>
+  }
+
+  optional (): BaseSchema<T, U, U | undefined, W> {
     return this.extend({ optional: true })
   }
 

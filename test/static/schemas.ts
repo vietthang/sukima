@@ -13,10 +13,6 @@ export const testStringWithOptional = validateMock(string().optional())
 
 export const testStringWithDefaultIsAString = validateMock(string().default('a'))
 
-export const testStringWithDefaultIsANumber = validateMock(string().default(1))
-
-export const testStringWithDefaultIsNull = validateMock(string().default(null))
-
 export const testNullableString = validateMock(nullable(string()))
 
 export const testNumber = validateMock(number())
