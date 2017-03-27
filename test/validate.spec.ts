@@ -1,5 +1,7 @@
 import 'mocha'
 import { assert } from 'chai'
+import { Either } from 'ramda-fantasy'
+
 import { string, integer, array } from '../src'
 import { validate } from '../src/validate'
 
@@ -8,26 +10,26 @@ describe('Base schema test', () => {
     const input = 'randomstring'
     const schema = string()
     const result = validate(schema, input)
-    assert.equal(input, result.value)
+    assert(result.equals(Either.of(input)))
   })
 
   it('Should fail when some criteria are invalid', () => {
     const input = 'randomstring'
 
-    assert.isDefined(validate(string().maxLength(5), input).error)
-    assert.isDefined(validate(string().minLength(20), input).error)
-    assert.isDefined(validate(string().enum(['random', 'string']), input).error)
+    assert(Either.isLeft(validate(string().maxLength(5), input)))
+    assert(Either.isLeft(validate(string().minLength(20), input)))
+    assert(Either.isLeft(validate(string().enum(['random', 'string']), input)))
   })
 
   it('Should success when validate nullable schema with null & string values, fail otherwise', () => {
     const schema = string().nullable()
-    assert.isUndefined(validate(schema, 'string').error)
-    assert.isUndefined(validate(schema, null).error)
-    assert.isDefined(validate(schema, 1).error)
-    assert.isDefined(validate(schema, {}).error)
-    assert.isDefined(validate(schema, []).error)
-    assert.isDefined(validate(schema, undefined).error)
-    assert.isDefined(validate(schema, new Date()).error)
+    assert(Either.isRight(validate(schema, 'string')))
+    assert(Either.isRight(validate(schema, null)))
+    assert(Either.isLeft((validate(schema, 1))))
+    assert(Either.isLeft((validate(schema, {}))))
+    assert(Either.isLeft((validate(schema, []))))
+    assert(Either.isLeft((validate(schema, undefined))))
+    assert(Either.isLeft((validate(schema, new Date()))))
   })
 
   it('Should success when validate array schema', () => {
@@ -36,6 +38,6 @@ describe('Base schema test', () => {
       bar: integer(),
     })
 
-    assert.doesNotThrow(() => validate(schema, [{ foo: 'string', bar: 1 }]))
+    assert(Either.isRight(validate(schema, [{ foo: 'string', bar: 1 }])))
   })
 })

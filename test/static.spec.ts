@@ -19,7 +19,15 @@ const testCases = [
     expected: 'string | undefined',
   },
   {
-    name: 'testStringWithDefaultIsAString',
+    name: 'testStringWithDefault',
+    expected: 'string',
+  },
+  {
+    name: 'testStringWithDefaultThenOptional',
+    expected: 'string | (string & undefined)',
+  },
+  {
+    name: 'testStringWithOptionalThenDefault',
     expected: 'string',
   },
   {
@@ -79,7 +87,7 @@ describe('Check resolved type', () => {
     options,
   )
   const result = program.emit()
-  assert.equal(false, result.emitSkipped)
+  assert.equal(false, result.emitSkipped, result.diagnostics[0].messageText.toString())
 
   const sourceFile = program.getSourceFile(filePath)
   const identifierNodes = getIdentifiers(sourceFile)

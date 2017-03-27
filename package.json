@@ -42,7 +42,8 @@
   },
   "dependencies": {
     "ajv": "^4.11.5",
-    "ramda": "^0.23.0"
+    "ramda": "^0.23.0",
+    "ramda-fantasy": "^0.7.0"
   },
   "typings": "build/src/sukima.d.ts",
   "nyc": {

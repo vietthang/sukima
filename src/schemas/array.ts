@@ -1,13 +1,15 @@
+import { Maybe } from 'ramda-fantasy'
+
 import { Schema, BaseSchema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
-function toSchema<T>(schema: Schema<T> | PropertyDefinitions<T> | undefined) {
+function toSchema<T>(schema: Schema<T> | PropertyDefinitions<T> | undefined): Maybe<Schema<T>> {
   if (schema instanceof BaseSchema) {
-    return schema
+    return Maybe.Just(schema)
   } else if (typeof schema === 'object') {
-    return new ObjectSchema(schema)
+    return Maybe.Just(new ObjectSchema<any, never, any, never>(schema))
   } else {
-    return undefined
+    return Maybe.Nothing<Schema<T>>()
   }
 }
 
@@ -15,9 +17,16 @@ export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
 
   /** @internal */
   constructor(schema?: Schema<T> | PropertyDefinitions<T>) {
-    super('array', {
-      items: toSchema<T>(schema),
-    })
+    super(
+      'array',
+      Maybe.maybe(
+        {},
+        (schema) => ({
+          items: schema,
+        }),
+        toSchema<T>(schema),
+      ),
+    )
   }
 
   maxItems(maxItems: number) {

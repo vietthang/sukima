@@ -95,7 +95,3 @@ export function oneOf(...schemas: any[]): any {
     oneOf: schemas,
   })
 };
-
-export function nullable<T>(schema: Schema<T>) {
-  return anyOf(new BaseSchema<null, never, null, never>('null'), schema)
-}

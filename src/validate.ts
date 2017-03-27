@@ -1,21 +1,24 @@
-import { mapObjIndexed, clone } from 'ramda'
-import Ajv = require('ajv')
+import { mapObjIndexed, clone, memoize } from 'ramda'
+import { Either } from 'ramda-fantasy'
+import { Ajv, ErrorObject } from 'ajv'
+import AJV = require('ajv')
 
 import { Schema } from './schemas/base'
 import { JsonSchema } from './jsonSchema'
-import { memoize } from './utils'
 
 export interface ValidateOptions {
-  convert: boolean
+  coerce: boolean
+  removeAdditional: boolean
+  useDefaults: boolean
 }
 
 export class ValidationError extends Error {
 
-  public readonly errors: Ajv.ErrorObject[]
+  public readonly errors: ErrorObject[]
 
   public readonly source: any
 
-  constructor(source: any, errors: Ajv.ErrorObject[]) {
+  constructor(source: any, errors: ErrorObject[]) {
     super('Validation Error')
     this.source = source
     this.errors = errors.filter(error => error.keyword !== '__type')
@@ -23,15 +26,12 @@ export class ValidationError extends Error {
 
 }
 
-type AjvContainer = {
-  compile: (schema: Object) => Ajv.ValidateFunction;
-}
-
-const getAjvInstance = memoize<boolean, AjvContainer>(
-  (convert: boolean) => {
-    const ajv = new Ajv({
-      useDefaults: true,
-      coerceTypes: convert ? 'array' : false,
+const getAjvInstance = memoize<Ajv>(
+  ({ coerce, useDefaults, removeAdditional }) => {
+    const ajv = new AJV({
+      useDefaults,
+      coerceTypes: coerce ? 'array' : false,
+      removeAdditional,
     })
 
     ajv.addKeyword(
@@ -51,11 +51,7 @@ const getAjvInstance = memoize<boolean, AjvContainer>(
       },
     )
 
-    return {
-      compile: memoize<any, Ajv.ValidateFunction>(
-        (schema: Object) => ajv.compile(schema),
-      ),
-    }
+    return ajv
   },
 )
 
@@ -70,34 +66,48 @@ const convertJsonSchemaToAjvSchema = memoize(
     return {
       ...copied,
       __type: type,
-      properties: properties ? mapObjIndexed((childSchema: JsonSchema) => {
+      properties: properties && mapObjIndexed((childSchema: JsonSchema) => {
         return convertJsonSchemaToAjvSchema(childSchema)
-      }, properties) : undefined,
-      items: items ? convertJsonSchemaToAjvSchema(items) : undefined,
-      allOf: allOf ? convertJsonSchemaToAjvSchema(allOf) : undefined,
-      anyOf: anyOf ? convertJsonSchemaToAjvSchema(anyOf) : undefined,
-      oneOf: oneOf ? convertJsonSchemaToAjvSchema(oneOf) : undefined,
+      }, properties),
+      items: items && convertJsonSchemaToAjvSchema(items),
+      allOf: allOf && convertJsonSchemaToAjvSchema(allOf),
+      anyOf: anyOf && convertJsonSchemaToAjvSchema(anyOf),
+      oneOf: oneOf && convertJsonSchemaToAjvSchema(oneOf),
     }
   },
 )
 
-export interface ValidateResult<T> {
-  value?: T
-  error?: ValidationError
+export interface Validator<T> {
+
+  validate(input: any): Either<ValidationError, T>
+
+}
+
+export function compile<T>(
+  schema: Schema<T>,
+  options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false }): Validator<T> {
+  const ajv = getAjvInstance(options)
+  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(convertSchemaToJsonSchema(schema)))
+  const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
+
+  return {
+    validate: (input: any): Either<ValidationError, T> => {
+      const validateValue = isFiltering ? clone(input) : input
+
+      const result = compiled(validateValue)
+      if (!result) {
+        return Either.Left(new ValidationError(validateValue, compiled.errors!))
+      } else {
+        return Either.Right(validateValue)
+      }
+    },
+  }
 }
 
 export function validate<T>(
   schema: Schema<T>,
   value: any,
-  options: ValidateOptions = { convert: false },
-): ValidateResult<T> {
-  const ajv = getAjvInstance(options.convert)
-  const clonedValue = clone(value)
-  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(convertSchemaToJsonSchema(schema)))
-  const result = compiled(clonedValue)
-  if (!result) {
-    return { error: new ValidationError(clonedValue, compiled.errors!) }
-  } else {
-    return { value: clonedValue }
-  }
+  options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false },
+): Either<ValidationError, T> {
+  return compile(schema, options).validate(value)
 }

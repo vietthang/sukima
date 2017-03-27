@@ -1,6 +1,6 @@
 import { mapObjIndexed } from 'ramda'
+import { Maybe } from 'ramda-fantasy'
 
-import { evictUndefined } from '../utils'
 import { JsonSchema } from '../jsonSchema'
 
 /** @internal */
@@ -82,10 +82,10 @@ export interface SchemaProps<T> {
 
 }
 
-function getRequiredProperties<T>(props: SchemaProps<T>) {
+function getRequiredProperties<T>(props: SchemaProps<T>): Maybe<string[]> {
   const properties = props.properties
   if (!properties) {
-    return undefined
+    return Maybe.Nothing<string[]>()
   }
 
   const required = Object.keys(props.properties).filter((key: keyof T) => {
@@ -93,7 +93,7 @@ function getRequiredProperties<T>(props: SchemaProps<T>) {
     return !property.props.optional
   })
 
-  return required.length ? required : undefined
+  return required.length ? Maybe.Just(required) : Maybe.Nothing<string[]>()
 }
 
 export interface Schema<T> {
@@ -117,7 +117,11 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
 
   /** @internal */
   public constructor(type?: SchemaType, props: SchemaProps<T> = {}) {
-    this.props = { ...props, type: type }
+    this.props = Maybe.maybe(
+      props,
+      (type) => ({ ...props, type }),
+      type ? Maybe.Just(type) : Maybe.Nothing<SchemaType>(),
+    )
   }
 
   /** @internal */
@@ -125,9 +129,16 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
     const { props } = this
     const { properties, items, allOf, anyOf, oneOf, ...copied } = props
 
-    return evictUndefined({
-      ...copied,
-      required: getRequiredProperties(props),
+    let ret = copied
+
+    ret = Maybe.maybe(
+      ret,
+      (keys) => ({ ...ret, required: keys }),
+      getRequiredProperties(props),
+    )
+
+    ret = {
+      ...ret,
       properties: properties && mapObjIndexed((childSchema: Schema<any>) => {
         return childSchema.toJsonSchema()
       }, properties),
@@ -135,7 +146,9 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
       allOf: allOf && allOf.map(schema => schema.toJsonSchema()),
       anyOf: anyOf && anyOf.map(schema => schema.toJsonSchema()),
       oneOf: oneOf && oneOf.map(schema => schema.toJsonSchema()),
-    })
+    }
+
+    return ret
   }
 
   /** @internal */
