@@ -1,5 +1,4 @@
 import { mapObjIndexed, clone, memoize } from 'ramda'
-import { Either } from 'ramda-fantasy'
 import { Ajv, ErrorObject } from 'ajv'
 import AJV = require('ajv')
 
@@ -55,31 +54,25 @@ const getAjvInstance = memoize<Ajv>(
   },
 )
 
-const convertSchemaToJsonSchema = memoize(
-  (schema: Schema<any>): JsonSchema => schema.toJsonSchema(),
-)
+function convertJsonSchemaToAjvSchema(jsonSchema: JsonSchema): any {
+  const { properties, items, allOf, anyOf, oneOf, type, ...copied } = jsonSchema
 
-const convertJsonSchemaToAjvSchema = memoize(
-  (jsonSchema: JsonSchema): any => {
-    const { properties, items, allOf, anyOf, oneOf, type, ...copied } = jsonSchema
-
-    return {
-      ...copied,
-      __type: type,
-      properties: properties && mapObjIndexed((childSchema: JsonSchema) => {
-        return convertJsonSchemaToAjvSchema(childSchema)
-      }, properties),
-      items: items && convertJsonSchemaToAjvSchema(items),
-      allOf: allOf && convertJsonSchemaToAjvSchema(allOf),
-      anyOf: anyOf && convertJsonSchemaToAjvSchema(anyOf),
-      oneOf: oneOf && convertJsonSchemaToAjvSchema(oneOf),
-    }
-  },
-)
+  return {
+    ...copied,
+    __type: type,
+    properties: properties && mapObjIndexed((childSchema: JsonSchema) => {
+      return convertJsonSchemaToAjvSchema(childSchema)
+    }, properties),
+    items: items && convertJsonSchemaToAjvSchema(items),
+    allOf: allOf && convertJsonSchemaToAjvSchema(allOf),
+    anyOf: anyOf && convertJsonSchemaToAjvSchema(anyOf),
+    oneOf: oneOf && convertJsonSchemaToAjvSchema(oneOf),
+  }
+}
 
 export interface Validator<T> {
 
-  validate(input: any): Either<ValidationError, T>
+  validate(input: any): T
 
 }
 
@@ -87,18 +80,18 @@ export function compile<T>(
   schema: Schema<T>,
   options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false }): Validator<T> {
   const ajv = getAjvInstance(options)
-  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(convertSchemaToJsonSchema(schema)))
+  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(schema.toJsonSchema()))
   const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
 
   return {
-    validate: (input: any): Either<ValidationError, T> => {
+    validate: (input: any): T => {
       const validateValue = isFiltering ? clone(input) : input
 
       const result = compiled(validateValue)
       if (!result) {
-        return Either.Left(new ValidationError(validateValue, compiled.errors!))
+        throw new ValidationError(validateValue, compiled.errors!)
       } else {
-        return Either.Right(validateValue)
+        return validateValue
       }
     },
   }
@@ -108,6 +101,6 @@ export function validate<T>(
   schema: Schema<T>,
   value: any,
   options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false },
-): Either<ValidationError, T> {
+) {
   return compile(schema, options).validate(value)
 }
