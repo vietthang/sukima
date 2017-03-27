@@ -77,7 +77,7 @@ export interface SchemaProps<T> {
   nullable?: boolean
 
   meta?: {
-    [key: string]: string,
+    [key: string]: any,
   }
 
 }
@@ -163,6 +163,23 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
 
   not (schema: Schema<any>) {
     return this.extend({ not: schema })
+  }
+
+  meta (key: string, value: any): this;
+
+  meta (key: string): any;
+
+  meta (key: string, value?: any): any {
+    if (value !== undefined) {
+      return this.extend({
+        meta: {
+          ...(this.props.meta || {}),
+          [key]: value,
+        },
+      })
+    } else {
+      return (this.props.meta || {})[key]
+    }
   }
 
   default (defaultValue: T): BaseSchema<T, T, T, W> {

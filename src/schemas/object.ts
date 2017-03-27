@@ -7,7 +7,7 @@ function resolveProperties<T extends object> (definitions: PropertyDefinitions<T
     if (definition instanceof BaseSchema) {
       return definition
     } else {
-      return new ObjectSchema<T, any, T, any>(definition)
+      return new ObjectSchema<T, never, T, never>(definition)
     }
   }, definitions)
 }

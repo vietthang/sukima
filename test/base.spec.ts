@@ -47,7 +47,7 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.props, { type: 'object', description: RANDOM_STRING_2 })
   })
 
-  it('Should set, overwrite & remove default correctly', () => {
+  it('Should set, overwrite default correctly', () => {
     let schema = new SchemaImpl('object')
     assert.deepEqual(schema.props, { type: 'object'})
     schema = schema.default(RANDOM_STRING_1)
@@ -56,12 +56,21 @@ describe('Base schema test', () => {
     assert.deepEqual(schema.props, { type: 'object', default: RANDOM_STRING_2 })
   })
 
-  it('Should set, overwrite & remove enum correctly', () => {
+  it('Should set, overwrite enum correctly', () => {
     let schema = new SchemaImpl('object')
     assert.deepEqual(schema.props, { type: 'object'})
     schema = schema.enum([RANDOM_STRING_1])
     assert.deepEqual(schema.props, { type: 'object', enum: [RANDOM_STRING_1] })
     schema = schema.enum([RANDOM_STRING_1, RANDOM_STRING_2])
     assert.deepEqual(schema.props, { type: 'object', enum: [RANDOM_STRING_1, RANDOM_STRING_2] })
+  })
+
+  it('Should set and get metadata correctly', () => {
+    let schema = new SchemaImpl('object')
+    assert.deepEqual(schema.props, { type: 'object'})
+    schema = schema.meta('foo', 'bar').meta('fooz', [1, 2, 3])
+    assert.equal(schema.meta('foo'), 'bar')
+    assert.deepEqual(schema.meta('fooz'), [1, 2, 3])
+    assert.isUndefined(schema.meta('foozz'))
   })
 })
