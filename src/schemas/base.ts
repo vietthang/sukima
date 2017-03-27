@@ -123,18 +123,18 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
   /** @internal */
   public toJsonSchema(): JsonSchema {
     const { props } = this
-    const { properties, items, allOf, anyOf, oneOf } = props
+    const { properties, items, allOf, anyOf, oneOf, ...copied } = props
 
     return evictUndefined({
-      ...this.props,
+      ...copied,
       required: getRequiredProperties(props),
-      properties: properties ? mapObjIndexed((childSchema: Schema<any>) => {
+      properties: properties && mapObjIndexed((childSchema: Schema<any>) => {
         return childSchema.toJsonSchema()
-      }, properties) : undefined,
-      items: items ? items.toJsonSchema() : undefined,
-      allOf: allOf ? allOf.map(schema => schema.toJsonSchema()) : undefined,
-      anyOf: anyOf ? anyOf.map(schema => schema.toJsonSchema()) : undefined,
-      oneOf: oneOf ? oneOf.map(schema => schema.toJsonSchema()) : undefined,
+      }, properties),
+      items: items && items.toJsonSchema(),
+      allOf: allOf && allOf.map(schema => schema.toJsonSchema()),
+      anyOf: anyOf && anyOf.map(schema => schema.toJsonSchema()),
+      oneOf: oneOf && oneOf.map(schema => schema.toJsonSchema()),
     })
   }
 

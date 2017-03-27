@@ -1,4 +1,4 @@
-import { BaseSchema } from './schemas/base'
+import { Schema, BaseSchema } from './schemas/base'
 import { StringSchema } from './schemas/string'
 import { NumberSchema } from './schemas/number'
 import { ObjectSchema, PropertyDefinitions } from './schemas/object'
@@ -28,8 +28,8 @@ export function object<T extends object>(definitions: PropertyDefinitions<T>): O
   return new ObjectSchema<T, never, T, never>(definitions)
 }
 
-export function array() {
-  return new ArraySchema<any, never, any[], never>()
+export function array<T>(schema?: Schema<T> | PropertyDefinitions<T>) {
+  return new ArraySchema<T, never, T[], never>(schema)
 }
 
 export function nil() {
@@ -39,7 +39,7 @@ export function nil() {
 export { Schema, BaseSchema } from './schemas/base';
 export { StringSchema } from './schemas/string';
 export { NumberSchema } from './schemas/number';
-export { ObjectSchema } from './schemas/object';
+export { ObjectSchema, PropertyDefinitions } from './schemas/object';
 export { ArraySchema } from './schemas/array';
 
 export { validate } from './validate';

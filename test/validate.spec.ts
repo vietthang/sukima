@@ -2,7 +2,6 @@ import 'mocha'
 import { assert } from 'chai'
 import { string, integer, array } from '../src'
 import { validate } from '../src/validate'
-import { nullable } from '../src/operators'
 
 describe('Base schema test', () => {
   it('Should validate simple string ok', () => {
@@ -21,7 +20,7 @@ describe('Base schema test', () => {
   })
 
   it('Should success when validate nullable schema with null & string values, fail otherwise', () => {
-    const schema = nullable(string())
+    const schema = string().nullable()
     assert.isUndefined(validate(schema, 'string').error)
     assert.isUndefined(validate(schema, null).error)
     assert.isDefined(validate(schema, 1).error)
@@ -32,7 +31,7 @@ describe('Base schema test', () => {
   })
 
   it('Should success when validate array schema', () => {
-    const schema = array().items({
+    const schema = array({
       foo: string(),
       bar: integer(),
     })

@@ -38,6 +38,30 @@ const testCases = [
     name: 'testNullableNumber',
     expected: 'number | null',
   },
+  {
+    name: 'testArray',
+    expected: '{}[]',
+  },
+  {
+    name: 'testStringArray',
+    expected: 'string[]',
+  },
+  {
+    name: 'testNumberArray',
+    expected: 'number[]',
+  },
+  {
+    name: 'testObjectArray',
+    expected: '{ foo: string; bar: number; }[]',
+  },
+  {
+    name: 'testRawObjectArray',
+    expected: '{ foo: string; bar: number; }[]',
+  },
+  {
+    name: 'testNestedObjectArray',
+    expected: '{ foo: string; bar: number; items: { fooz: number; }[]; }[]',
+  },
 ]
 
 function getIdentifiers(node: ts.Node): ts.Node[] {

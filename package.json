@@ -60,7 +60,7 @@
       "ts-node/register"
     ],
     "reporter": [
-      "json",
+      "text-summary",
       "html"
     ],
     "all": true

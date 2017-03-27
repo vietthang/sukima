@@ -1,11 +1,23 @@
 import { Schema, BaseSchema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
+function toSchema<T>(schema: Schema<T> | PropertyDefinitions<T> | undefined) {
+  if (schema instanceof BaseSchema) {
+    return schema
+  } else if (typeof schema === 'object') {
+    return new ObjectSchema(schema)
+  } else {
+    return undefined
+  }
+}
+
 export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
 
   /** @internal */
-  constructor() {
-    super('array')
+  constructor(schema?: Schema<T> | PropertyDefinitions<T>) {
+    super('array', {
+      items: toSchema<T>(schema),
+    })
   }
 
   maxItems(maxItems: number) {
@@ -18,14 +30,6 @@ export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
 
   uniqueItems(uniqueItems: boolean) {
     return this.extend({ uniqueItems })
-  }
-
-  items<T1>(schema: Schema<T1> | PropertyDefinitions<T1>): ArraySchema<T1, U, V, W> {
-    if (schema instanceof BaseSchema) {
-      return this.extend({ items: schema }) as any as ArraySchema<T1, U, V, W>
-    } else {
-      return this.items(new ObjectSchema(schema)) as any as ArraySchema<T1, U, V, W>
-    }
   }
 
   default(defaultValue: T[]): ArraySchema<T, T[], T[], W> {

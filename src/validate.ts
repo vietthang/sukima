@@ -38,7 +38,7 @@ const getAjvInstance = memoize<boolean, AjvContainer>(
       '__type',
       {
         macro(schema: any, parentSchema: any): any {
-          if (parentSchema['x-nullable']) {
+          if (parentSchema.nullable) {
             return {
               type: ['null', schema],
             }
@@ -65,7 +65,7 @@ const convertSchemaToJsonSchema = memoize(
 
 const convertJsonSchemaToAjvSchema = memoize(
   (jsonSchema: JsonSchema): any => {
-    const { properties, items, type, ...copied } = jsonSchema
+    const { properties, items, allOf, anyOf, oneOf, type, ...copied } = jsonSchema
 
     return {
       ...copied,
@@ -74,6 +74,9 @@ const convertJsonSchemaToAjvSchema = memoize(
         return convertJsonSchemaToAjvSchema(childSchema)
       }, properties) : undefined,
       items: items ? convertJsonSchemaToAjvSchema(items) : undefined,
+      allOf: allOf ? convertJsonSchemaToAjvSchema(allOf) : undefined,
+      anyOf: anyOf ? convertJsonSchemaToAjvSchema(anyOf) : undefined,
+      oneOf: oneOf ? convertJsonSchemaToAjvSchema(oneOf) : undefined,
     }
   },
 )
