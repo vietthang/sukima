@@ -24,7 +24,7 @@ export function boolean() {
   return new BaseSchema<boolean, never, boolean, never>('boolean')
 }
 
-export function object<T extends object>(definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
+export function object<T>(definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
   return new ObjectSchema<T, never, T, never>(definitions)
 }
 
@@ -36,10 +36,10 @@ export function nil() {
   return new BaseSchema<null, never, null, never>('null')
 }
 
-export { Schema, BaseSchema } from './schemas/base';
+export { Schema, BaseSchema, PropertyMap } from './schemas/base';
 export { StringSchema } from './schemas/string';
 export { NumberSchema } from './schemas/number';
-export { ObjectSchema, PropertyDefinitions } from './schemas/object';
+export { ObjectSchema } from './schemas/object';
 export { ArraySchema } from './schemas/array';
 
 export { validate } from './validate';

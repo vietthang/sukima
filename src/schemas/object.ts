@@ -1,8 +1,8 @@
 import { mapObjIndexed } from 'ramda'
 
-import { Schema, BaseSchema, PropertyMap } from './base'
+import { Schema, BaseSchema, PropertyMap, SchemaProps } from './base'
 
-function resolveProperties<T extends object>(definitions: PropertyDefinitions<T>): PropertyMap<T> {
+function resolveProperties<T>(definitions: PropertyDefinitions<T>): PropertyMap<T> {
   return mapObjIndexed((definition: Schema<any> | PropertyDefinitions<any>) => {
     if (definition instanceof BaseSchema) {
       return definition
@@ -16,7 +16,12 @@ export type PropertyDefinitions<T> = {
   [property in keyof T]: Schema<T[property]> | PropertyDefinitions<T[property]>;
 }
 
-export class ObjectSchema<T extends object, U, V, W> extends BaseSchema<T, U, V, W> {
+export class ObjectSchema<T, U, V, W> extends BaseSchema<T, U, V, W> {
+
+  /** @internal */
+  public readonly props: SchemaProps<T> & {
+    properties: PropertyMap<T>,
+  }
 
   /** @internal */
   constructor(definitions: PropertyDefinitions<T>) {
@@ -49,6 +54,10 @@ export class ObjectSchema<T extends object, U, V, W> extends BaseSchema<T, U, V,
 
   optional(): ObjectSchema<T, U, U | undefined, W> {
     return this.extend({ optional: true })
+  }
+
+  getPropertyMap(): PropertyMap<T> {
+    return this.props.properties
   }
 
 }

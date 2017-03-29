@@ -6,7 +6,6 @@ import { JsonSchema } from '../jsonSchema'
 /** @internal */
 export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
 
-/** @internal */
 export type PropertyMap<T> = {
   [K in keyof T]: Schema<T[K]>;
 }
