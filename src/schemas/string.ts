@@ -4,7 +4,7 @@ export class StringSchema<U, V, W> extends BaseSchema<string, U, V, W> {
 
   /** @internal */
   constructor() {
-    super('string')
+    super({ type: 'string' })
   }
 
   format(format: string) {

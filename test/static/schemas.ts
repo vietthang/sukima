@@ -1,4 +1,3 @@
-/// <reference path="../../src/definitions/ramda-fantasy.d.ts" />
 import { Schema } from '../../src/schemas/base'
 
 import { array, string, number, object } from '../../src'

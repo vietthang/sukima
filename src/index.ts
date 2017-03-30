@@ -21,7 +21,7 @@ export function integer() {
 }
 
 export function boolean() {
-  return new BaseSchema<boolean, never, boolean, never>('boolean')
+  return new BaseSchema<boolean, never, boolean, never>({ type: 'boolean' })
 }
 
 export function object<T>(definitions: PropertyDefinitions<T>): ObjectSchema<T, never, T, never> {
@@ -33,7 +33,7 @@ export function array<T>(schema?: Schema<T> | PropertyDefinitions<T>) {
 }
 
 export function nil() {
-  return new BaseSchema<null, never, null, never>('null')
+  return new BaseSchema<null, never, null, never>({ type: 'null' })
 }
 
 export { Schema, BaseSchema, PropertyMap } from './schemas/base';

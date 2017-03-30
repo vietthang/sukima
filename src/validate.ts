@@ -1,9 +1,7 @@
 import { mapObjIndexed, clone, memoize } from 'ramda'
-import { Ajv, ErrorObject } from 'ajv'
-import AJV = require('ajv')
+import * as ajv from 'ajv'
 
-import { Schema } from './schemas/base'
-import { JsonSchema } from './jsonSchema'
+import { Schema, SchemaProps } from './schemas/base'
 
 export interface ValidateOptions {
   coerce: boolean
@@ -13,11 +11,11 @@ export interface ValidateOptions {
 
 export class ValidationError extends Error {
 
-  public readonly errors: ErrorObject[]
+  public readonly errors: ajv.ErrorObject[]
 
   public readonly source: any
 
-  constructor(source: any, errors: ErrorObject[]) {
+  constructor(source: any, errors: ajv.ErrorObject[]) {
     super('Validation Error')
     this.source = source
     this.errors = errors.filter(error => error.keyword !== '__type')
@@ -25,15 +23,15 @@ export class ValidationError extends Error {
 
 }
 
-const getAjvInstance = memoize<Ajv>(
+const getAjvInstance = memoize<ajv.Ajv>(
   ({ coerce, useDefaults, removeAdditional }) => {
-    const ajv = new AJV({
+    const ajvInstance = new ajv({
       useDefaults,
       coerceTypes: coerce ? 'array' : false,
       removeAdditional,
     })
 
-    ajv.addKeyword(
+    ajvInstance.addKeyword(
       '__type',
       {
         macro(schema: any, parentSchema: any): any {
@@ -50,23 +48,38 @@ const getAjvInstance = memoize<Ajv>(
       },
     )
 
-    return ajv
+    return ajvInstance
   },
 )
 
-function convertJsonSchemaToAjvSchema(jsonSchema: JsonSchema): any {
-  const { properties, items, allOf, anyOf, oneOf, type, ...copied } = jsonSchema
+function getRequiredProperties(props: SchemaProps<any>): string[] | undefined {
+  const properties = props.properties
+  if (!properties) {
+    return undefined
+  }
+
+  const required = Object.keys(props.properties).filter((key: string) => {
+    const property = properties[key]
+    return !property.props.optional
+  })
+
+  return required.length ? required : undefined
+}
+
+function convertSchemaToAjvSchema(schema: Schema<any>): any {
+  const { properties, items, allOf, anyOf, oneOf, type, ...copied } = schema.props
 
   return {
     ...copied,
     __type: type,
-    properties: properties && mapObjIndexed((childSchema: JsonSchema) => {
-      return convertJsonSchemaToAjvSchema(childSchema)
+    properties: properties && mapObjIndexed((childSchema: Schema<any>) => {
+      return convertSchemaToAjvSchema(childSchema)
     }, properties),
-    items: items && convertJsonSchemaToAjvSchema(items),
-    allOf: allOf && convertJsonSchemaToAjvSchema(allOf),
-    anyOf: anyOf && convertJsonSchemaToAjvSchema(anyOf),
-    oneOf: oneOf && convertJsonSchemaToAjvSchema(oneOf),
+    items: items && convertSchemaToAjvSchema(items),
+    allOf: allOf && allOf.map(convertSchemaToAjvSchema),
+    anyOf: anyOf && anyOf.map(convertSchemaToAjvSchema),
+    oneOf: oneOf && oneOf.map(convertSchemaToAjvSchema),
+    required: getRequiredProperties(schema.props),
   }
 }
 
@@ -80,7 +93,7 @@ export function compile<T>(
   schema: Schema<T>,
   options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false }): Validator<T> {
   const ajv = getAjvInstance(options)
-  const compiled = ajv.compile(convertJsonSchemaToAjvSchema(schema.toJsonSchema()))
+  const compiled = ajv.compile(convertSchemaToAjvSchema(schema))
   const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
 
   return {

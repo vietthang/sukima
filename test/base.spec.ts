@@ -1,12 +1,12 @@
 import 'mocha'
-import { assert } from 'chai'
+import * as assert from 'assert'
 
 import { BaseSchema, SchemaType } from '../src/schemas/base'
 
 class SchemaImpl extends BaseSchema<any, never, any, never> {
 
   public constructor(type: SchemaType) {
-    super(type)
+    super({ type })
   }
 
 }
@@ -71,6 +71,6 @@ describe('Base schema test', () => {
     schema = schema.meta('foo', 'bar').meta('fooz', [1, 2, 3])
     assert.equal(schema.meta('foo'), 'bar')
     assert.deepEqual(schema.meta('fooz'), [1, 2, 3])
-    assert.isUndefined(schema.meta('foozz'))
+    assert.equal(schema.meta('foozz'), undefined)
   })
 })

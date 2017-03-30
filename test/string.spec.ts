@@ -1,5 +1,5 @@
 import 'mocha'
-import { assert } from 'chai'
+import * as assert from 'assert'
 import { StringSchema } from '../src/schemas/string'
 
 const RANDOM_STRING_1 = Math.random().toLocaleString()

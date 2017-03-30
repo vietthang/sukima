@@ -1,6 +1,5 @@
 import 'mocha'
-import { assert } from 'chai'
-import { equals } from 'ramda'
+import * as assert from 'assert'
 
 import { string, number } from '../src'
 import { ObjectSchema } from '../src/schemas/object'
@@ -8,24 +7,20 @@ import { ObjectSchema } from '../src/schemas/object'
 const RANDOM_NUMBER_1 = Math.random()
 const RANDOM_NUMBER_2 = Math.random()
 
-function assertDeepEqual(lhs: any, rhs: any) {
-  return assert(equals<any>(lhs, rhs))
-}
-
 describe('Object schema test', () => {
   it('Should create simple object schema correctly', () => {
     const schema = new ObjectSchema({})
-    assertDeepEqual(schema.props, { type: 'object', properties: {} })
+    assert.deepEqual(schema.props, { type: 'object', properties: {} })
   })
 
   it('Should set, overwrite & remove minProperties correctly', () => {
     let schema = new ObjectSchema({})
-    assertDeepEqual(schema.props, { type: 'object', properties: {} })
-    assertDeepEqual(
+    assert.deepEqual(schema.props, { type: 'object', properties: {} })
+    assert.deepEqual(
       schema.minProperties(RANDOM_NUMBER_1).props,
       { type: 'object', minProperties: RANDOM_NUMBER_1, properties: {} },
     )
-    assertDeepEqual(
+    assert.deepEqual(
       schema.minProperties(RANDOM_NUMBER_2).props,
       { type: 'object', minProperties: RANDOM_NUMBER_2, properties: {} },
     )
@@ -33,12 +28,12 @@ describe('Object schema test', () => {
 
   it('Should set, overwrite & remove maxProperties correctly', () => {
     let schema = new ObjectSchema({})
-    assertDeepEqual(schema.props, { type: 'object', properties: {} })
-    assertDeepEqual(
+    assert.deepEqual(schema.props, { type: 'object', properties: {} })
+    assert.deepEqual(
       schema.maxProperties(RANDOM_NUMBER_1).props,
       { type: 'object', maxProperties: RANDOM_NUMBER_1, properties: {} },
     )
-    assertDeepEqual(
+    assert.deepEqual(
       schema.maxProperties(RANDOM_NUMBER_2).props,
       { type: 'object', maxProperties: RANDOM_NUMBER_2, properties: {} },
     )
@@ -49,25 +44,23 @@ describe('Object schema test', () => {
       foo: string(),
       bar: number(),
     })
-    assert(
-      equals<any>(
-        schema.props,
-        {
-          type: 'object',
-          properties: {
-            foo: {
-              props: {
-                type: 'string',
-              },
+    assert.deepEqual(
+      schema.props,
+      {
+        type: 'object',
+        properties: {
+          foo: {
+            props: {
+              type: 'string',
             },
-            bar: {
-              props: {
-                type: 'number',
-              },
+          },
+          bar: {
+            props: {
+              type: 'number',
             },
           },
         },
-      ),
+      },
     )
   })
 
@@ -77,33 +70,31 @@ describe('Object schema test', () => {
       bar: number(),
     })
 
-    assert(
-      equals<any>(
-        schema.props,
-        {
-          type: 'object',
-          properties: {
-            foo: {
-              props: {
-                type: 'string',
-                optional: true,
-              },
+    assert.deepEqual(
+      schema.props,
+      {
+        type: 'object',
+        properties: {
+          foo: {
+            props: {
+              type: 'string',
+              optional: true,
             },
-            bar: {
-              props: {
-                type: 'number',
-              },
+          },
+          bar: {
+            props: {
+              type: 'number',
             },
           },
         },
-      ),
+      },
     )
   })
 
   it('Should interact with nullable & optional correctly', () => {
     const schema = new ObjectSchema({})
 
-    assertDeepEqual(
+    assert.deepEqual(
       schema.props,
       {
         type: 'object',
@@ -111,7 +102,7 @@ describe('Object schema test', () => {
       },
     )
 
-    assertDeepEqual(
+    assert.deepEqual(
       schema.optional().props,
       {
         type: 'object',

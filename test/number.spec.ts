@@ -1,5 +1,5 @@
 import 'mocha'
-import { assert } from 'chai'
+import * as assert from 'assert'
 import { NumberSchema } from '../src/schemas/number'
 
 const RANDOM_NUMBER_1 = Math.random()

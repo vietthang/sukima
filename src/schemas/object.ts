@@ -3,13 +3,16 @@ import { mapObjIndexed } from 'ramda'
 import { Schema, BaseSchema, PropertyMap, SchemaProps } from './base'
 
 function resolveProperties<T>(definitions: PropertyDefinitions<T>): PropertyMap<T> {
-  return mapObjIndexed((definition: Schema<any> | PropertyDefinitions<any>) => {
-    if (definition instanceof BaseSchema) {
-      return definition
-    } else {
-      return new ObjectSchema<T, never, T, never>(definition)
-    }
-  }, definitions)
+  return mapObjIndexed(
+    (definition: Schema<any> | PropertyDefinitions<any>) => {
+      if (definition instanceof BaseSchema) {
+        return definition
+      } else {
+        return new ObjectSchema<T, never, T, never>(definition)
+      }
+    },
+    definitions,
+  ) as any
 }
 
 export type PropertyDefinitions<T> = {
@@ -25,7 +28,8 @@ export class ObjectSchema<T, U, V, W> extends BaseSchema<T, U, V, W> {
 
   /** @internal */
   constructor(definitions: PropertyDefinitions<T>) {
-    super('object', {
+    super({
+      type: 'object',
       properties: resolveProperties(definitions),
     })
   }

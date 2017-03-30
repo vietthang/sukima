@@ -1,98 +1,77 @@
-import { mapObjIndexed } from 'ramda'
-import { Maybe } from 'ramda-fantasy'
-
-import { JsonSchema } from '../jsonSchema'
-
-/** @internal */
 export type SchemaType = 'string' | 'number' | 'integer' | 'array' | 'object' | 'boolean' | 'null'
 
 export type PropertyMap<T> = {
   [K in keyof T]: Schema<T[K]>;
 }
 
-/** @internal */
 export interface SchemaProps<T> {
 
-  id?: string
+  readonly id?: string
 
-  title?: string
+  readonly title?: string
 
-  description?: string
+  readonly description?: string
 
-  'default'?: any
+  readonly 'default'?: T
 
-  multipleOf?: number
+  readonly multipleOf?: number
 
-  maximum?: number
+  readonly maximum?: number
 
-  exclusiveMaximum?: boolean
+  readonly exclusiveMaximum?: boolean
 
-  minimum?: number
+  readonly minimum?: number
 
-  exclusiveMinimum?: boolean
+  readonly exclusiveMinimum?: boolean
 
-  maxLength?: number
+  readonly maxLength?: number
 
-  minLength?: number
+  readonly minLength?: number
 
-  pattern?: string
+  readonly pattern?: string
 
-  additionalItems?: boolean
+  readonly additionalItems?: boolean
 
-  items?: Schema<any>
+  readonly items?: Schema<any>
 
-  maxItems?: number
+  readonly maxItems?: number
 
-  minItems?: number
+  readonly minItems?: number
 
-  uniqueItems?: boolean
+  readonly uniqueItems?: boolean
 
-  maxProperties?: number
+  readonly maxProperties?: number
 
-  minProperties?: number
+  readonly minProperties?: number
 
-  required?: string[]
+  readonly required?: string[]
 
-  additionalProperties?: boolean
+  readonly additionalProperties?: boolean
 
-  properties?: PropertyMap<T>
+  readonly properties?: PropertyMap<T>
 
-  enum?: T[]
+  readonly enum?: T[]
 
-  type?: SchemaType
+  readonly type?: SchemaType
 
-  allOf?: Schema<any>[]
+  readonly allOf?: Schema<any>[]
 
-  anyOf?: Schema<any>[]
+  readonly anyOf?: Schema<any>[]
 
-  oneOf?: Schema<any>[]
+  readonly oneOf?: Schema<any>[]
 
-  not?: Schema<any>
+  readonly not?: Schema<any>
 
-  format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string
+  readonly format?: 'date-time' | 'email' | 'hostname' | 'ipv4' | 'ipv6' | 'uri' | string
 
-  optional?: boolean
+  readonly optional?: boolean
 
-  nullable?: boolean
+  readonly nullable?: boolean
 
-  meta?: {
-    [key: string]: any,
+  readonly meta?: {
+    readonly [key: string]: any,
   }
 
-}
-
-function getRequiredProperties<T>(props: SchemaProps<T>): Maybe<string[]> {
-  const properties = props.properties
-  if (!properties) {
-    return Maybe.Nothing<string[]>()
-  }
-
-  const required = Object.keys(props.properties).filter((key: keyof T) => {
-    const property = properties[key]
-    return !property.props.optional
-  })
-
-  return required.length ? Maybe.Just(required) : Maybe.Nothing<string[]>()
 }
 
 export interface Schema<T> {
@@ -101,9 +80,6 @@ export interface Schema<T> {
 
   /** @internal */
   readonly props: SchemaProps<any>
-
-  /** @internal */
-  toJsonSchema(): JsonSchema
 
 }
 
@@ -115,46 +91,16 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
   public readonly props: SchemaProps<T>
 
   /** @internal */
-  public constructor(type?: SchemaType, props: SchemaProps<T> = {}) {
-    this.props = Maybe.maybe(
-      props,
-      (type) => ({ ...props, type }),
-      type ? Maybe.Just(type) : Maybe.Nothing<SchemaType>(),
-    )
-  }
-
-  /** @internal */
-  public toJsonSchema(): JsonSchema {
-    const { props } = this
-    const { properties, items, allOf, anyOf, oneOf, ...copied } = props
-
-    let ret = copied
-
-    ret = Maybe.maybe(
-      ret,
-      (keys) => ({ ...ret, required: keys }),
-      getRequiredProperties(props),
-    )
-
-    ret = {
-      ...ret,
-      properties: properties && mapObjIndexed((childSchema: Schema<any>) => {
-        return childSchema.toJsonSchema()
-      }, properties),
-      items: items && items.toJsonSchema(),
-      allOf: allOf && allOf.map(schema => schema.toJsonSchema()),
-      anyOf: anyOf && anyOf.map(schema => schema.toJsonSchema()),
-      oneOf: oneOf && oneOf.map(schema => schema.toJsonSchema()),
-    }
-
-    return ret
+  public constructor(props: SchemaProps<T> = {}) {
+    this.props = props
   }
 
   /** @internal */
   public extend(properties?: Partial<SchemaProps<T>>): this {
-    const cloned = Object.create(this.constructor.prototype)
-    cloned.props = { ...this.props, ...properties as any }
-    return cloned
+    return Object.assign(
+      Object.create(this.constructor.prototype),
+      { props: Object.assign({}, this.props, properties) },
+    )
   }
 
   id(id: string) {

@@ -1,11 +1,11 @@
 import 'mocha'
-import { assert } from 'chai'
-import * as ts from 'typescript'
-import fs = require('fs')
+import * as assert from 'assert'
+import { Node, SyntaxKind, createProgram, convertCompilerOptionsFromJson } from 'typescript'
+import { readFileSync } from 'fs'
 import { chain } from 'ramda'
 
-const { options } = ts.convertCompilerOptionsFromJson(
-  JSON.parse(fs.readFileSync('tsconfig.json', 'utf8')).compilerOptions,
+const { options } = convertCompilerOptionsFromJson(
+  JSON.parse(readFileSync('tsconfig.json', 'utf8')).compilerOptions,
   'tsconfig.json',
 )
 
@@ -72,8 +72,8 @@ const testCases = [
   },
 ]
 
-function getIdentifiers(node: ts.Node): ts.Node[] {
-  if (node.kind === ts.SyntaxKind.Identifier) {
+function getIdentifiers(node: Node): Node[] {
+  if (node.kind === SyntaxKind.Identifier) {
     return [node]
   } else {
     return chain(getIdentifiers, node.getChildren())
@@ -82,7 +82,7 @@ function getIdentifiers(node: ts.Node): ts.Node[] {
 
 describe('Check resolved type', () => {
   const filePath = 'test/static/schemas.ts'
-  const program = ts.createProgram(
+  const program = createProgram(
     [filePath],
     options,
   )
@@ -96,7 +96,7 @@ describe('Check resolved type', () => {
   testCases.forEach(({ name, expected }) => {
     it(`Symbol "${name}" should be resolved to type "${expected}"`, () => {
       const node = identifierNodes.find(node => node.getText() === name)
-      assert.isDefined(node)
+      assert(node !== undefined)
       const type = typeChecker.getTypeAtLocation(node!)
       assert.equal(expected, typeChecker.typeToString(type))
     })

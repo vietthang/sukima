@@ -4,7 +4,7 @@ export class NumberSchema<U, V, W> extends BaseSchema<number, U, V, W> {
 
   /** @internal */
   constructor(type: 'number' | 'integer' = 'number') {
-    super(type)
+    super({ type })
   }
 
   multipleOf(multipleOf: number) {

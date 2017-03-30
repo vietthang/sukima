@@ -1,6 +1,6 @@
 import 'mocha'
 import 'source-map-support/register'
-import { assert } from 'chai'
+import * as assert from 'assert'
 import { equals } from 'ramda'
 
 import { ArraySchema } from '../src/schemas/array'
@@ -45,7 +45,7 @@ describe('Array schema test', () => {
 
   it('Should set, overwrite & remove items correctly', () => {
     const stringArraySchema = new ArraySchema(new StringSchema())
-    assert(equals<any>(stringArraySchema.props, { type: 'array' , items: { props: { type: 'string' } } }))
+    assert.equal(JSON.stringify(stringArraySchema.props), JSON.stringify({ type: 'array' , items: { props: { type: 'string' } }}))
     const schema = new ArraySchema({
       stringKey: new StringSchema(),
       objectKey: {

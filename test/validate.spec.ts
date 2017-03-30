@@ -1,5 +1,5 @@
 import 'mocha'
-import { assert } from 'chai'
+import * as assert from 'assert'
 
 import { string, integer, array } from '../src'
 import { validate } from '../src/validate'
@@ -15,20 +15,20 @@ describe('Base schema test', () => {
   it('Should fail when some criteria are invalid', () => {
     const input = 'randomstring'
 
-    assert.throw(() => validate(string().maxLength(5), input))
-    assert.throw(() => validate(string().minLength(20), input))
-    assert.throw(() => validate(string().enum(['random', 'string']), input))
+    assert.throws(() => validate(string().maxLength(5), input))
+    assert.throws(() => validate(string().minLength(20), input))
+    assert.throws(() => validate(string().enum(['random', 'string']), input))
   })
 
   it('Should success when validate nullable schema with null & string values, fail otherwise', () => {
     const schema = string().nullable()
     assert.doesNotThrow(() => validate(schema, 'string'))
     assert.doesNotThrow(() => validate(schema, null))
-    assert.throw(() => validate(schema, 1))
-    assert.throw(() => validate(schema, {}))
-    assert.throw(() => validate(schema, []))
-    assert.throw(() => validate(schema, undefined))
-    assert.throw(() => validate(schema, new Date()))
+    assert.throws(() => validate(schema, 1))
+    assert.throws(() => validate(schema, {}))
+    assert.throws(() => validate(schema, []))
+    assert.throws(() => validate(schema, undefined))
+    assert.throws(() => validate(schema, new Date()))
   })
 
   it('Should success when validate array schema', () => {

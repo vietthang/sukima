@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "outDir": "build",
+    "rootDir": ".",
     "target": "ES5",
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
     "strictNullChecks": true,
-    "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -15,7 +15,6 @@
     "removeComments": true,
     "stripInternal": true,
     "declaration": true,
-    "suppressImplicitAnyIndexErrors": true,
     "lib": ["es6"]
   },
   "compileOnSave": false
