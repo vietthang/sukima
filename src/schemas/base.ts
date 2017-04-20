@@ -76,16 +76,24 @@ export interface SchemaProps<T> {
 
 export interface Schema<T> {
 
-  readonly _: T
-
   /** @internal */
   readonly props: SchemaProps<any>
+
+  id(id: string): this
+
+  title(title: string): this
+
+  description(description: string): this
+
+  nullable(): Schema<T | null>
+
+  meta(key: string, value: any): this
+
+  meta(key: string): any
 
 }
 
 export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
-
-  public readonly _: T | (U & V) | W
 
   /** @internal */
   public readonly props: SchemaProps<T>
