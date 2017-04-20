@@ -76,6 +76,8 @@ export interface SchemaProps<T> {
 
 export interface Schema<T> {
 
+  readonly _: T
+
   /** @internal */
   readonly props: SchemaProps<any>
 
@@ -94,6 +96,8 @@ export interface Schema<T> {
 }
 
 export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
+
+  readonly _: T | (U & V) | W
 
   /** @internal */
   public readonly props: SchemaProps<T>

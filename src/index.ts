@@ -46,6 +46,6 @@ export { NumberSchema } from './schemas/number';
 export { ObjectSchema } from './schemas/object';
 export { ArraySchema } from './schemas/array';
 
-export { validate } from './validate';
+export { validate, compile } from './validate';
 
 export * from './operators'
