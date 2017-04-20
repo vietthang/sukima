@@ -36,6 +36,10 @@ export function nil() {
   return new BaseSchema<null, never, null, never>({ type: 'null' })
 }
 
+export function enumOf<T>(values: T[]) {
+  return new BaseSchema<T, never, T, never>({ enum: values })
+}
+
 export { Schema, BaseSchema, PropertyMap } from './schemas/base';
 export { StringSchema } from './schemas/string';
 export { NumberSchema } from './schemas/number';
