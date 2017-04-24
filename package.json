@@ -27,7 +27,6 @@
   "devDependencies": {
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.10",
-    "@types/ramda": "types/npm-ramda",
     "dts-bundle": "^0.7.2",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
@@ -39,8 +38,7 @@
     "typescript": "^2.2.1"
   },
   "dependencies": {
-    "ajv": "^4.11.5",
-    "ramda": "^0.23.0"
+    "ajv": "^4.11.5"
   },
   "typings": "build/src/sukima.d.ts",
   "nyc": {

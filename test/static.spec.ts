@@ -2,7 +2,6 @@ import 'mocha'
 import * as assert from 'assert'
 import { Node, SyntaxKind, createProgram, convertCompilerOptionsFromJson } from 'typescript'
 import { readFileSync } from 'fs'
-import { chain } from 'ramda'
 
 const { options } = convertCompilerOptionsFromJson(
   JSON.parse(readFileSync('tsconfig.json', 'utf8')).compilerOptions,
@@ -75,9 +74,12 @@ const testCases = [
 function getIdentifiers(node: Node): Node[] {
   if (node.kind === SyntaxKind.Identifier) {
     return [node]
-  } else {
-    return chain(getIdentifiers, node.getChildren())
   }
+
+  return node.getChildren().map(getIdentifiers).reduce<Node[]>(
+    (prev, entries) => prev.concat(entries),
+    [],
+  )
 }
 
 describe('Check resolved type', () => {

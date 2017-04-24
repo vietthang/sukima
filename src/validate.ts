@@ -1,4 +1,4 @@
-import { mapObjIndexed, clone, memoize } from 'ramda'
+import { mapValues, clone } from './utils'
 import * as ajv from 'ajv'
 
 import { Schema, SchemaProps } from './schemas/base'
@@ -23,34 +23,32 @@ export class ValidationError extends Error {
 
 }
 
-const getAjvInstance = memoize<ajv.Ajv>(
-  ({ coerce, useDefaults, removeAdditional }) => {
-    const ajvInstance = new ajv({
-      useDefaults,
-      coerceTypes: coerce ? 'array' : false,
-      removeAdditional,
-    })
+const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptions) => {
+  const ajvInstance = new ajv({
+    useDefaults,
+    coerceTypes: coerce ? 'array' : false,
+    removeAdditional,
+  })
 
-    ajvInstance.addKeyword(
-      '__type',
-      {
-        macro(schema: any, parentSchema: any): any {
-          if (parentSchema.nullable) {
-            return {
-              type: ['null', schema],
-            }
-          } else {
-            return {
-              type: schema,
-            }
+  ajvInstance.addKeyword(
+    '__type',
+    {
+      macro(schema: any, parentSchema: any): any {
+        if (parentSchema.nullable) {
+          return {
+            type: ['null', schema],
           }
-        },
+        } else {
+          return {
+            type: schema,
+          }
+        }
       },
-    )
+    },
+  )
 
-    return ajvInstance
-  },
-)
+  return ajvInstance
+}
 
 function getRequiredProperties(props: SchemaProps<any>): string[] | undefined {
   const properties = props.properties
@@ -72,7 +70,7 @@ function convertSchemaToAjvSchema(schema: Schema<any>): any {
   return {
     ...copied,
     __type: type,
-    properties: properties && mapObjIndexed((childSchema: Schema<any>) => {
+    properties: properties && mapValues((childSchema: Schema<any>) => {
       return convertSchemaToAjvSchema(childSchema)
     }, properties),
     items: items && convertSchemaToAjvSchema(items),

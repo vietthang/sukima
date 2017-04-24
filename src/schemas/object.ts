@@ -1,9 +1,8 @@
-import { mapObjIndexed } from 'ramda'
-
 import { Schema, BaseSchema, PropertyMap, SchemaProps } from './base'
+import { mapValues } from '../utils'
 
 function resolveProperties<T>(definitions: PropertyDefinitions<T>): PropertyMap<T> {
-  return mapObjIndexed(
+  return mapValues(
     (definition: Schema<any> | PropertyDefinitions<any>) => {
       if (definition instanceof BaseSchema) {
         return definition
@@ -12,7 +11,7 @@ function resolveProperties<T>(definitions: PropertyDefinitions<T>): PropertyMap<
       }
     },
     definitions,
-  ) as any
+  )
 }
 
 export type PropertyDefinitions<T> = {

@@ -1,7 +1,6 @@
 import 'mocha'
 import 'source-map-support/register'
 import * as assert from 'assert'
-import { equals } from 'ramda'
 
 import { ArraySchema } from '../src/schemas/array'
 import { StringSchema } from '../src/schemas/string'
@@ -52,28 +51,26 @@ describe('Array schema test', () => {
         numberKey: new NumberSchema(),
       },
     })
-    assert(
-      equals<any>(
-        schema.props,
-        {
-          type: 'array',
-          items: {
-            props: {
-              type: 'object',
-              properties: {
-                stringKey: {
-                  props: {
-                    type: 'string',
-                  },
+    assert.deepEqual(
+      schema.props,
+      {
+        type: 'array',
+        items: {
+          props: {
+            type: 'object',
+            properties: {
+              stringKey: {
+                props: {
+                  type: 'string',
                 },
-                objectKey: {
-                  props: {
-                    type: 'object',
-                    properties: {
-                      numberKey: {
-                        props: {
-                          type: 'number',
-                        },
+              },
+              objectKey: {
+                props: {
+                  type: 'object',
+                  properties: {
+                    numberKey: {
+                      props: {
+                        type: 'number',
                       },
                     },
                   },
@@ -82,7 +79,7 @@ describe('Array schema test', () => {
             },
           },
         },
-      ),
+      },
     )
   })
 
