@@ -9,26 +9,24 @@ describe('Base schema test', () => {
     const input = 'randomstring'
     const schema = string()
     const result = validate(schema, input)
-    assert(result === input)
+    assert.deepEqual(result, { value: input })
   })
 
   it('Should fail when some criteria are invalid', () => {
     const input = 'randomstring'
 
-    assert.throws(() => validate(string().maxLength(5), input))
-    assert.throws(() => validate(string().minLength(20), input))
-    assert.throws(() => validate(string().enum(['random', 'string']), input))
+    assert(validate(string().maxLength(5), input).error)
+    assert(validate(string().minLength(20), input).error)
+    assert(validate(string().enum(['random', 'string']), input).error)
   })
 
   it('Should success when validate nullable schema with null & string values, fail otherwise', () => {
     const schema = string().nullable()
-    assert.doesNotThrow(() => validate(schema, 'string'))
-    assert.doesNotThrow(() => validate(schema, null))
-    assert.throws(() => validate(schema, 1))
-    assert.throws(() => validate(schema, {}))
-    assert.throws(() => validate(schema, []))
-    assert.throws(() => validate(schema, undefined))
-    assert.throws(() => validate(schema, new Date()))
+    assert(validate(schema, 'string').error === undefined)
+    assert(validate(schema, null).error === undefined)
+    assert(validate(schema, 1).error)
+    assert(validate(schema, {}).error)
+    assert(validate(schema, new Date()).error)
   })
 
   it('Should success when validate array schema', () => {
@@ -37,6 +35,6 @@ describe('Base schema test', () => {
       bar: integer(),
     })
 
-    assert.doesNotThrow(() => validate(schema, [{ foo: 'string', bar: 1 }]))
+    assert(validate(schema, [{ foo: 'string', bar: 1 }]).error === undefined)
   })
 })

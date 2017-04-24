@@ -83,9 +83,11 @@ function convertSchemaToAjvSchema(schema: Schema<any>): any {
   }
 }
 
+export type ValidationResult<T> = { error?: ValidationError, value?: T }
+
 export interface Validator<T> {
 
-  validate(input: any): T
+  (input: any): ValidationResult<T>
 
 }
 
@@ -96,17 +98,15 @@ export function compile<T>(
   const compiled = ajv.compile(convertSchemaToAjvSchema(schema))
   const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
 
-  return {
-    validate: (input: any): T => {
-      const validateValue = isFiltering ? clone(input) : input
+  return (input: any): ValidationResult<T> => {
+    const validateValue = isFiltering ? clone(input) : input
 
-      const result = compiled(validateValue)
-      if (!result) {
-        throw new ValidationError(validateValue, compiled.errors!)
-      } else {
-        return validateValue
-      }
-    },
+    const result = compiled(validateValue)
+    if (!result) {
+      return { error: new ValidationError(validateValue, compiled.errors!) }
+    } else {
+      return { value: validateValue }
+    }
   }
 }
 
@@ -115,5 +115,5 @@ export function validate<T>(
   value: any,
   options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false },
 ) {
-  return compile(schema, options).validate(value)
+  return compile(schema, options)(value)
 }
