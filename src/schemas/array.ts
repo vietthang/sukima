@@ -1,20 +1,12 @@
 import { Schema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
-function toSchema<T>(schema?: Schema<T> | PropertyDefinitions<T>): Schema<T> | undefined {
+function toSchema<T>(schema: Schema<T> | PropertyDefinitions<T>): Schema<T> {
   if (schema instanceof Schema) {
     return schema
   }
 
-  if (typeof schema === 'object') {
-    return new ObjectSchema(schema as PropertyDefinitions<T>)
-  }
-
-  if (schema === undefined) {
-    return undefined
-  }
-
-  throw new Error('Invalid type of definition')
+  return new ObjectSchema(schema as PropertyDefinitions<T>)
 }
 
 export class ArraySchema<T> extends Schema<T[]> {

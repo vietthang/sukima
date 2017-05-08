@@ -111,4 +111,21 @@ describe('Object schema test', () => {
       },
     )
   })
+
+  it('Should get property map correctly', () => {
+    const schema = new ObjectSchema({
+      foo: string(),
+      bar: number(),
+    })
+
+    const propertyMap = schema.getPropertyMap()
+
+    assert.deepEqual(
+      propertyMap,
+      {
+        foo: string(),
+        bar: number(),
+      },
+    )
+  })
 })

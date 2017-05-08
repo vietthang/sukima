@@ -1,7 +1,7 @@
 import 'mocha'
 import * as assert from 'assert'
 
-import { string, integer, array } from '../src'
+import { string, integer, array, object } from '../src'
 import { validate } from '../src/validate'
 
 describe('Base schema test', () => {
@@ -37,5 +37,14 @@ describe('Base schema test', () => {
     })
 
     assert(validate(schema, [{ foo: 'string', bar: 1 }]).isSuccess())
+  })
+
+  it('Should success when validate array schema', () => {
+    const schema = object({
+      foo: string(),
+      bar: integer(),
+    }).additionalProperties()
+
+    assert(validate(schema, { foo: 'string', bar: 1, fooz: 1 }).isSuccess())
   })
 })
