@@ -1,6 +1,6 @@
-import { BaseSchema } from './base'
+import { Schema } from './base'
 
-export class StringSchema<U, V, W> extends BaseSchema<string, U, V, W> {
+export class StringSchema extends Schema<string> {
 
   /** @internal */
   constructor() {
@@ -25,18 +25,6 @@ export class StringSchema<U, V, W> extends BaseSchema<string, U, V, W> {
     } else {
       return this.extend({ pattern })
     }
-  }
-
-  default(defaultValue: string): StringSchema<string, string, W> {
-    return this.extend({ default: defaultValue }) as StringSchema<string, string, W>
-  }
-
-  nullable(): StringSchema<U, V, null> {
-    return this.extend({ nullable: true }) as StringSchema<U, V, null>
-  }
-
-  optional(): StringSchema< U, U | undefined, W> {
-    return this.extend({ optional: true })
   }
 
 }

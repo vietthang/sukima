@@ -1,6 +1,6 @@
-import { BaseSchema } from './base'
+import { Schema } from './base'
 
-export class NumberSchema<U, V, W> extends BaseSchema<number, U, V, W> {
+export class NumberSchema extends Schema<number> {
 
   /** @internal */
   constructor(type: 'number' | 'integer' = 'number') {
@@ -25,18 +25,6 @@ export class NumberSchema<U, V, W> extends BaseSchema<number, U, V, W> {
 
   exclusiveMinimum(exclusiveMinimum: boolean) {
     return this.extend({ exclusiveMinimum })
-  }
-
-  default(defaultValue: number): NumberSchema<number, number, W> {
-    return this.extend({ default: defaultValue }) as NumberSchema<number, number, W>
-  }
-
-  nullable(): NumberSchema<U, V, null> {
-    return this.extend({ nullable: true }) as NumberSchema<U, V, null>
-  }
-
-  optional(): NumberSchema<U, U | undefined, W> {
-    return this.extend({ optional: true })
   }
 
 }

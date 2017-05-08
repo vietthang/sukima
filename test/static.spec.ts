@@ -23,11 +23,11 @@ const testCases = [
   },
   {
     name: 'testStringWithDefaultThenOptional',
-    expected: 'string | (string & undefined)',
+    expected: 'string | undefined',
   },
   {
     name: 'testStringWithOptionalThenDefault',
-    expected: 'string',
+    expected: 'string | undefined',
   },
   {
     name: 'testNullableString',

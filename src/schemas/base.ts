@@ -74,45 +74,13 @@ export interface SchemaProps<T> {
 
 }
 
-export interface Schema<T> {
+export class Schema<T> {
 
-  readonly _: T
-
-  /** @internal */
-  readonly props: SchemaProps<any>
-
-  id(id: string): this
-
-  title(title: string): this
-
-  description(description: string): this
-
-  nullable(): Schema<T | null>
-
-  meta(key: string, value: any): this
-
-  meta(key: string): any
-
-}
-
-export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
-
-  readonly _: T | (U & V) | W
+  readonly props: SchemaProps<T>
 
   /** @internal */
-  public readonly props: SchemaProps<T>
-
-  /** @internal */
-  public constructor(props: SchemaProps<T> = {}) {
+  constructor(props: SchemaProps<T> = {}) {
     this.props = props
-  }
-
-  /** @internal */
-  public extend(properties?: Partial<SchemaProps<T>>): this {
-    return Object.assign(
-      Object.create(this.constructor.prototype),
-      { props: Object.assign({}, this.props, properties) },
-    )
   }
 
   id(id: string) {
@@ -131,37 +99,33 @@ export class BaseSchema<T, U, V, W> implements Schema<T | (U & V) | W> {
     return this.extend({ enum: values })
   }
 
-  not(schema: Schema<any>) {
-    return this.extend({ not: schema })
+  meta(key: string, value: any) {
+    return this.extend({
+      meta: {
+        ...(this.props.meta || {}),
+        [key]: value,
+      },
+    })
   }
 
-  meta(key: string, value: any): this;
-
-  meta(key: string): any;
-
-  meta(key: string, value?: any): any {
-    if (value !== undefined) {
-      return this.extend({
-        meta: {
-          ...(this.props.meta || {}),
-          [key]: value,
-        },
-      })
-    } else {
-      return (this.props.meta || {})[key]
-    }
+  default(defaultValue: T) {
+    return this.extend({ default: defaultValue })
   }
 
-  default(defaultValue: T): BaseSchema<T, T, T, W> {
-    return this.extend({ default: defaultValue }) as BaseSchema<T, T, T, W>
+  nullable(): Schema<T | null> {
+    return this.extend({ nullable: true }) as any as Schema<T | null>
   }
 
-  nullable(): BaseSchema<T, U, V, null> {
-    return this.extend({ nullable: true }) as BaseSchema<T, U, V, null>
+  optional(): Schema<T | undefined> {
+    return this.extend({ optional: true }) as any as Schema<T | undefined>
   }
 
-  optional(): BaseSchema<T, U, U | undefined, W> {
-    return this.extend({ optional: true })
+  /** @internal */
+  protected extend(properties?: Partial<SchemaProps<T>>): this {
+    return Object.assign(
+      Object.create(this.constructor.prototype),
+      { props: Object.assign({}, this.props, properties) },
+    )
   }
 
 }

@@ -1,13 +1,13 @@
-import { Schema, BaseSchema } from './base'
+import { Schema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
 function toSchema<T>(schema?: Schema<T> | PropertyDefinitions<T>): Schema<T> | undefined {
-  if (schema instanceof BaseSchema) {
+  if (schema instanceof Schema) {
     return schema
   }
 
   if (typeof schema === 'object') {
-    return new ObjectSchema<any, never, any, never>(schema)
+    return new ObjectSchema(schema as PropertyDefinitions<T>)
   }
 
   if (schema === undefined) {
@@ -17,7 +17,7 @@ function toSchema<T>(schema?: Schema<T> | PropertyDefinitions<T>): Schema<T> | u
   throw new Error('Invalid type of definition')
 }
 
-export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
+export class ArraySchema<T> extends Schema<T[]> {
 
   /** @internal */
   constructor(schema?: Schema<T> | PropertyDefinitions<T>) {
@@ -40,18 +40,6 @@ export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
 
   uniqueItems(uniqueItems: boolean) {
     return this.extend({ uniqueItems })
-  }
-
-  default(defaultValue: T[]): ArraySchema<T, T[], T[], W> {
-    return this.extend({ default: defaultValue }) as ArraySchema<T, T[], T[], W>
-  }
-
-  nullable(): ArraySchema<T, U, V, null> {
-    return this.extend({ nullable: true }) as ArraySchema<T, U, V, null>
-  }
-
-  optional(): ArraySchema<T, U, U | undefined, W> {
-    return this.extend({ optional: true })
   }
 
 }

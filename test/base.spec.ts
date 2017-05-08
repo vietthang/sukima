@@ -1,9 +1,9 @@
 import 'mocha'
 import * as assert from 'assert'
 
-import { BaseSchema, SchemaType } from '../src/schemas/base'
+import { Schema, SchemaType } from '../src/schemas/base'
 
-class SchemaImpl extends BaseSchema<any, never, any, never> {
+class SchemaImpl extends Schema<any> {
 
   public constructor(type: SchemaType) {
     super({ type })
@@ -69,8 +69,8 @@ describe('Base schema test', () => {
     let schema = new SchemaImpl('object')
     assert.deepEqual(schema.props, { type: 'object'})
     schema = schema.meta('foo', 'bar').meta('fooz', [1, 2, 3])
-    assert.equal(schema.meta('foo'), 'bar')
-    assert.deepEqual(schema.meta('fooz'), [1, 2, 3])
-    assert.equal(schema.meta('foozz'), undefined)
+    assert.equal(schema.props.meta!.foo, 'bar')
+    assert.deepEqual(schema.props.meta!.fooz, [1, 2, 3])
+    assert.equal(schema.props.meta!.foozz, undefined)
   })
 })

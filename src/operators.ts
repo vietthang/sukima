@@ -1,4 +1,4 @@
-import { Schema, BaseSchema } from './schemas/base'
+import { Schema } from './schemas/base'
 
 export function allOf<T0, T1>(
   schema0: Schema<T0>,
@@ -27,7 +27,7 @@ export function allOf<T0, T1, T2, T3, T4>(
 ): Schema<T0 & T1 & T2 & T3 & T4>
 
 export function allOf(...schemas: Schema<any>[]): any {
-  return new BaseSchema().extend({
+  return new Schema({
     allOf: schemas,
   })
 };
@@ -59,7 +59,7 @@ export function anyOf<T0, T1, T2, T3, T4>(
 ): Schema<T0 | T1 | T2 | T3 | T4>
 
 export function anyOf(...schemas: any[]): any {
-  return new BaseSchema().extend({
+  return new Schema({
     anyOf: schemas,
   })
 };
@@ -91,7 +91,7 @@ export function oneOf<T0, T1, T2, T3, T4>(
 ): Schema<T0 | T1 | T2 | T3 | T4>
 
 export function oneOf(...schemas: any[]): any {
-  return new BaseSchema().extend({
+  return new Schema({
     oneOf: schemas,
   })
 };
