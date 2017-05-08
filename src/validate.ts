@@ -1,5 +1,6 @@
 import { mapValues, clone } from './utils'
 import * as ajv from 'ajv'
+import { Success, Fail, Validation } from 'monet'
 
 import { Schema, SchemaProps } from './schemas/base'
 
@@ -81,29 +82,28 @@ function convertSchemaToAjvSchema(schema: Schema<any>): any {
   }
 }
 
-export type ValidationResult<T> = { error?: ValidationError, value?: T }
-
 export interface Validator<T> {
 
-  (input: any): ValidationResult<T>
+  (input: any): Validation<ValidationError, T>
 
 }
 
 export function compile<T>(
   schema: Schema<T>,
-  options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false }): Validator<T> {
+  options: ValidateOptions = { coerce: false, useDefaults: false, removeAdditional: false },
+): Validator<T> {
   const ajv = getAjvInstance(options)
   const compiled = ajv.compile(convertSchemaToAjvSchema(schema))
   const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
 
-  return (input: any): ValidationResult<T> => {
+  return (input: any): Validation<ValidationError, T> => {
     const validateValue = isFiltering ? clone(input) : input
 
     const result = compiled(validateValue)
     if (!result) {
-      return { error: new ValidationError(validateValue, compiled.errors!) }
+      return Fail<ValidationError, T>(new ValidationError(input, compiled.errors!))
     } else {
-      return { value: validateValue }
+      return Success<ValidationError, T>(validateValue)
     }
   }
 }

@@ -35,10 +35,11 @@
     "ts-node": "^3.0.2",
     "tslint": "^4.5.1",
     "tslint-config-standard": "^4.0.0",
-    "typescript": "^2.2.1"
+    "typescript": "^2.3.2"
   },
   "dependencies": {
-    "ajv": "^4.11.5"
+    "ajv": "^4.11.5",
+    "monet": "^0.8.10"
   },
   "typings": "build/src/sukima.d.ts",
   "nyc": {

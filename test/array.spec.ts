@@ -44,7 +44,7 @@ describe('Array schema test', () => {
 
   it('Should set, overwrite & remove items correctly', () => {
     const stringArraySchema = new ArraySchema(new StringSchema())
-    assert.equal(JSON.stringify(stringArraySchema.props), JSON.stringify({ type: 'array' , items: { props: { type: 'string' } }}))
+    assert.deepEqual(stringArraySchema.props, { type: 'array' , items: { props: { type: 'string' } }})
     const schema = new ArraySchema({
       stringKey: new StringSchema(),
       objectKey: {

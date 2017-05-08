@@ -1,14 +1,20 @@
 import { Schema, BaseSchema } from './base'
 import { ObjectSchema, PropertyDefinitions } from './object'
 
-function toSchema<T>(schema: Schema<T> | PropertyDefinitions<T> | undefined): Schema<T> | undefined {
+function toSchema<T>(schema?: Schema<T> | PropertyDefinitions<T>): Schema<T> | undefined {
   if (schema instanceof BaseSchema) {
     return schema
-  } else if (typeof schema === 'object') {
+  }
+
+  if (typeof schema === 'object') {
     return new ObjectSchema<any, never, any, never>(schema)
-  } else {
+  }
+
+  if (schema === undefined) {
     return undefined
   }
+
+  throw new Error('Invalid type of definition')
 }
 
 export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
@@ -17,8 +23,9 @@ export class ArraySchema<T, U, V, W> extends BaseSchema<T[], U, V, W> {
   constructor(schema?: Schema<T> | PropertyDefinitions<T>) {
     super(
       Object.assign(
-        { type: 'array' },
+        {},
         schema ? { items: toSchema(schema) } : {},
+        { type: 'array' } as any,
       ),
     )
   }
