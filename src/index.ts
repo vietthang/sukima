@@ -21,7 +21,7 @@ export function integer() {
 }
 
 export function boolean() {
-  return new Schema({ type: 'boolean' })
+  return new Schema<boolean>({ type: 'boolean' })
 }
 
 export function object<T>(definitions: PropertyDefinitions<T>) {
