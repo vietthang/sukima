@@ -20,8 +20,7 @@ export type PropertyDefinitions<T> = {
 
 export class ObjectSchema<T> extends Schema<T> {
 
-  /** @internal */
-  public readonly props: SchemaProps<T> & {
+  readonly props: SchemaProps<T> & {
     properties: PropertyMap<T>,
   }
 
