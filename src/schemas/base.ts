@@ -18,11 +18,11 @@ export interface SchemaProps<T> {
 
   readonly maximum?: number
 
-  readonly exclusiveMaximum?: boolean
+  readonly exclusiveMaximum?: number
 
   readonly minimum?: number
 
-  readonly exclusiveMinimum?: boolean
+  readonly exclusiveMinimum?: number
 
   readonly maxLength?: number
 

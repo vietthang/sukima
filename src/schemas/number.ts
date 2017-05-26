@@ -19,11 +19,11 @@ export class NumberSchema extends Schema<number> {
     return this.extend({ minimum })
   }
 
-  exclusiveMaximum(exclusiveMaximum: boolean) {
+  exclusiveMaximum(exclusiveMaximum: number) {
     return this.extend({ exclusiveMaximum })
   }
 
-  exclusiveMinimum(exclusiveMinimum: boolean) {
+  exclusiveMinimum(exclusiveMinimum: number) {
     return this.extend({ exclusiveMinimum })
   }
 
