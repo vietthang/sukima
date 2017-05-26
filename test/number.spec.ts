@@ -46,19 +46,19 @@ describe('Number schema test', () => {
   it('Should set, overwrite & remove exclusiveMaximum correctly', () => {
     let schema = new NumberSchema()
     assert.deepEqual(schema.props, { type: 'number'})
-    schema = schema.exclusiveMaximum(false)
-    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: false })
-    schema = schema.exclusiveMaximum(true)
-    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: true })
+    schema = schema.exclusiveMaximum(RANDOM_NUMBER_1)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: RANDOM_NUMBER_1 })
+    schema = schema.exclusiveMaximum(RANDOM_NUMBER_2)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMaximum: RANDOM_NUMBER_2 })
   })
 
   it('Should set, overwrite & remove exclusiveMinimum correctly', () => {
     let schema = new NumberSchema()
     assert.deepEqual(schema.props, { type: 'number'})
-    schema = schema.exclusiveMinimum(false)
-    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: false })
-    schema = schema.exclusiveMinimum(true)
-    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: true })
+    schema = schema.exclusiveMinimum(RANDOM_NUMBER_1)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: RANDOM_NUMBER_1 })
+    schema = schema.exclusiveMinimum(RANDOM_NUMBER_2)
+    assert.deepEqual(schema.props, { type: 'number', exclusiveMinimum: RANDOM_NUMBER_2 })
   })
 
   it('Should interact with nullable & optional correctly', () => {
