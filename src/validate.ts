@@ -28,7 +28,7 @@ const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptio
   const ajvInstance = new ajv({
     useDefaults,
     coerceTypes: coerce ? 'array' : false,
-    removeAdditional,
+    removeAdditional: removeAdditional ? 'all' : false,
   })
 
   ajvInstance.addKeyword(
