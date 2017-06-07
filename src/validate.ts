@@ -26,6 +26,10 @@ export class ValidationError extends Error {
 
 const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptions) => {
   const ajvInstance = new ajv({
+    allErrors: true,
+    jsonPointers: true,
+    format: 'full',
+    unknownFormats: true,
     useDefaults,
     coerceTypes: coerce ? 'array' : false,
     removeAdditional: removeAdditional ? 'all' : false,
