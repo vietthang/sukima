@@ -72,6 +72,8 @@ export interface SchemaProps<T> {
     readonly [key: string]: any,
   }
 
+  readonly errorMessage?: string
+
 }
 
 export class Schema<T> {
@@ -97,6 +99,10 @@ export class Schema<T> {
 
   enum(values: T[]) {
     return this.extend({ enum: values })
+  }
+
+  errorMessage(errorMessage: string) {
+    return this.extend({ errorMessage })
   }
 
   meta(key: string, value: any) {

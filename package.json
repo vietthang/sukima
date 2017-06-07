@@ -38,7 +38,8 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
-    "ajv": "^4.11.5",
+    "ajv": "^5.1.5",
+    "ajv-errors": "^1.0.0",
     "monet": "^0.8.10"
   },
   "typings": "build/src/sukima.d.ts",

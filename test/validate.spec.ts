@@ -47,4 +47,35 @@ describe('Base schema test', () => {
 
     assert(validate(schema, { foo: 'string', bar: 1, fooz: 1 }).isSuccess())
   })
+
+  it('Should return custom error message when specificed', () => {
+    const schema = string().minLength(2).maxLength(10).errorMessage('Should be a string with length between 2 and 10')
+    const result = validate(schema, '')
+    assert(result.isFail())
+    assert(result.failMap(({ errors }) => {
+      assert.deepEqual(
+        errors,
+        [
+          {
+            keyword: 'errorMessage',
+            dataPath: '',
+            schemaPath: '#/errorMessage',
+            params: {
+              errors: [
+                {
+                  dataPath: '',
+                  keyword: 'minLength',
+                  message: 'should NOT be shorter than 2 characters',
+                  params: {
+                    'limit': 2,
+                  },
+                  schemaPath: '#/minLength',
+                },
+              ],
+            },
+            message: 'Should be a string with length between 2 and 10' },
+        ],
+      )
+    }))
+  })
 })

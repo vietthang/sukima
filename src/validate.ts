@@ -1,5 +1,5 @@
 import { mapValues, clone } from './utils'
-import * as ajv from 'ajv'
+import * as Ajv from 'ajv'
 import { Success, Fail, Validation } from 'monet'
 
 import { Schema, SchemaProps } from './schemas/base'
@@ -12,11 +12,11 @@ export interface ValidateOptions {
 
 export class ValidationError extends Error {
 
-  public readonly errors: ajv.ErrorObject[]
+  public readonly errors: Ajv.ErrorObject[]
 
   public readonly source: any
 
-  constructor(source: any, errors: ajv.ErrorObject[]) {
+  constructor(source: any, errors: Ajv.ErrorObject[]) {
     super('Validation Error')
     this.source = source
     this.errors = errors.filter(error => error.keyword !== '__type')
@@ -25,7 +25,7 @@ export class ValidationError extends Error {
 }
 
 const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptions) => {
-  const ajvInstance = new ajv({
+  const ajv = new Ajv({
     allErrors: true,
     jsonPointers: true,
     format: 'full',
@@ -35,24 +35,9 @@ const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptio
     removeAdditional: removeAdditional ? 'all' : false,
   })
 
-  ajvInstance.addKeyword(
-    '__type',
-    {
-      macro(schema: any, parentSchema: any): any {
-        if (parentSchema.nullable) {
-          return {
-            type: ['null', schema],
-          }
-        } else {
-          return {
-            type: schema,
-          }
-        }
-      },
-    },
-  )
+  require('ajv-errors')(ajv)
 
-  return ajvInstance
+  return ajv
 }
 
 function getRequiredProperties(props: SchemaProps<any>): string[] | undefined {
@@ -70,11 +55,11 @@ function getRequiredProperties(props: SchemaProps<any>): string[] | undefined {
 }
 
 function convertSchemaToAjvSchema(schema: Schema<any>): any {
-  const { properties, items, allOf, anyOf, oneOf, type, ...copied } = schema.props
+  const { properties, items, allOf, anyOf, oneOf, type, nullable, ...copied } = schema.props
 
   return {
     ...copied,
-    __type: type,
+    type: type && (nullable ? [ 'null', type ] : type),
     properties: properties && mapValues((childSchema: Schema<any>) => {
       return convertSchemaToAjvSchema(childSchema)
     }, properties),
