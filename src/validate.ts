@@ -32,7 +32,7 @@ const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptio
     unknownFormats: true,
     useDefaults,
     coerceTypes: coerce ? 'array' : false,
-    removeAdditional: removeAdditional ? 'all' : false,
+    removeAdditional: removeAdditional ? true : false,
   })
 
   require('ajv-errors')(ajv)
@@ -55,7 +55,7 @@ function getRequiredProperties(props: SchemaProps<any>): string[] | undefined {
 }
 
 function convertSchemaToAjvSchema(schema: Schema<any>): any {
-  const { properties, items, allOf, anyOf, oneOf, type, nullable, ...copied } = schema.props
+  const { additionalProperties, properties, items, allOf, anyOf, oneOf, type, nullable, ...copied } = schema.props
 
   return {
     ...copied,
@@ -68,6 +68,7 @@ function convertSchemaToAjvSchema(schema: Schema<any>): any {
     anyOf: anyOf && anyOf.map(convertSchemaToAjvSchema),
     oneOf: oneOf && oneOf.map(convertSchemaToAjvSchema),
     required: getRequiredProperties(schema.props),
+    additionalProperties: !!additionalProperties,
   }
 }
 

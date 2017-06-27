@@ -10,7 +10,13 @@
     ],
     "space-before-function-paren": [
       true,
-      "never"
+      {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "always",
+        "method": "never",
+        "constructor": "never"
+      }
     ]
   }
 }
