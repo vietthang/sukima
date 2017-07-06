@@ -78,6 +78,8 @@ export interface SchemaProps<T> {
 
 export class Schema<T> {
 
+  readonly _: T
+
   readonly props: SchemaProps<T>
 
   /** @internal */
