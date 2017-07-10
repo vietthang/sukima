@@ -49,7 +49,9 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "**/*.d.ts"
+      "**/*.d.ts",
+      "src/index.ts",
+      "src/operators.ts"
     ],
     "extension": [
       ".ts"

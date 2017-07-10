@@ -27,7 +27,7 @@ describe('Base schema test', () => {
     assert(validate(schema, null).isSuccess())
     assert(validate(schema, 1).isFail())
     assert(validate(schema, {}).isFail())
-    assert(validate(schema, new Date()).isFail())
+    assert(validate(schema, new Date()).isSuccess())
   })
 
   it('Should success when validate array schema', () => {

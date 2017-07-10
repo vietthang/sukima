@@ -1,6 +1,7 @@
 import { Schema } from '../../src/schemas/base'
 
 import { array, string, number, object } from '../../src'
+import { allOf, anyOf, oneOf } from '../../src/operators'
 
 function validateMock<T>(schema: Schema<T>): T {
   return null as any as T
@@ -47,3 +48,30 @@ export const testNestedObjectArray = validateMock(array({
     fooz: number(),
   }),
 }))
+
+export const testAllOf = validateMock(allOf(
+  object({
+    foo: string(),
+  }),
+  object({
+    fooz: number(),
+  }),
+))
+
+export const testAnyOf = validateMock(anyOf(
+  object({
+    foo: string(),
+  }),
+  object({
+    fooz: number(),
+  }),
+))
+
+export const testOneOf = validateMock(oneOf(
+  object({
+    foo: string(),
+  }),
+  object({
+    fooz: number(),
+  }),
+))

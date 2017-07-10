@@ -69,6 +69,18 @@ const testCases = [
     name: 'testNestedObjectArray',
     expected: '{ foo: string; bar: number; items: { fooz: number; }[]; }[]',
   },
+  {
+    name: 'testAllOf',
+    expected: '{ foo: string; } & { fooz: number; }',
+  },
+  {
+    name: 'testAnyOf',
+    expected: '{ foo: string; } | { fooz: number; }',
+  },
+  {
+    name: 'testOneOf',
+    expected: '{ foo: string; } | { fooz: number; }',
+  },
 ]
 
 function getIdentifiers(node: Node): Node[] {
@@ -100,7 +112,7 @@ describe('Check resolved type', () => {
       const node = identifierNodes.find(node => node.getText() === name)
       assert(node !== undefined)
       const type = typeChecker.getTypeAtLocation(node!)
-      assert.equal(expected, typeChecker.typeToString(type))
+      assert.equal(typeChecker.typeToString(type), expected)
     })
   })
 })

@@ -84,10 +84,9 @@ export function compile<T>(
 ): Validator<T> {
   const ajv = getAjvInstance(options)
   const compiled = ajv.compile(convertSchemaToAjvSchema(schema))
-  const isFiltering = options.coerce || options.useDefaults || options.removeAdditional
 
   return (input: any): Validation<ValidationError, T> => {
-    const validateValue = isFiltering ? clone(input) : input
+    const validateValue = clone(input)
 
     const result = compiled(validateValue)
     if (!result) {
