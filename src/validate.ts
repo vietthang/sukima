@@ -35,8 +35,6 @@ const getAjvInstance = ({ coerce, useDefaults, removeAdditional }: ValidateOptio
     removeAdditional: removeAdditional ? true : false,
   })
 
-  require('ajv-errors')(ajv)
-
   return ajv
 }
 
